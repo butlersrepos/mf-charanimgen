@@ -1,0 +1,293 @@
+[gd_scene load_steps=7 format=3 uid="uid://gh77bfrjn517"]
+
+[ext_resource type="Script" path="res://addons/MF-CharAnimGen/UI/MF-CharAnimGenWindow.gd" id="1_d2sop"]
+[ext_resource type="FontFile" uid="uid://dl3xwx45oi6v6" path="res://addons/MF-CharAnimGen/UI/RobotoMono-Regular.ttf" id="2_50ln8"]
+[ext_resource type="StyleBox" uid="uid://l0brguqmoxs1" path="res://addons/MF-CharAnimGen/UI/button_style_box_flat.tres" id="2_vesud"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_a1baj"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_af5j7"]
+bg_color = Color(0.33, 0.33, 0.33, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nwlhf"]
+
+[node name="MFCharGenWindow" type="Window"]
+title = "Mini Fantasy Character Animation Builder"
+initial_position = 1
+size = Vector2i(450, 725)
+wrap_controls = true
+script = ExtResource("1_d2sop")
+
+[node name="PopupMenu" type="Panel" parent="."]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+
+[node name="MarginContainer2" type="MarginContainer" parent="PopupMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_default_cursor_shape = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="WholeContainer" type="VBoxContainer" parent="PopupMenu/MarginContainer2"]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+
+[node name="CharFolderInstructionsContainer" type="HBoxContainer" parent="PopupMenu/MarginContainer2/WholeContainer"]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+
+[node name="CharacterFolderInstructionsLabel" type="RichTextLabel" parent="PopupMenu/MarginContainer2/WholeContainer/CharFolderInstructionsContainer"]
+clip_contents = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+mouse_default_cursor_shape = 1
+theme_override_fonts/mono_font = ExtResource("2_50ln8")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_a1baj")
+bbcode_enabled = true
+text = "Character asset folders should be wholly extracted into the same directory together, like
+[code]
+res://Characters/
+    Human/
+    Orc/
+[/code]"
+fit_content = true
+scroll_active = false
+
+[node name="Spacer" type="Control" parent="PopupMenu/MarginContainer2/WholeContainer"]
+custom_minimum_size = Vector2(0, 15)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+
+[node name="CharFolderSelectionSection" type="VBoxContainer" parent="PopupMenu/MarginContainer2/WholeContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="PopupMenu/MarginContainer2/WholeContainer/CharFolderSelectionSection"]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+
+[node name="SelectCharactersLabel" type="Label" parent="PopupMenu/MarginContainer2/WholeContainer/CharFolderSelectionSection/HBoxContainer3"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
+text = "Select your characters folder ➡️"
+
+[node name="ChangeCharacterFolderButton" type="Button" parent="PopupMenu/MarginContainer2/WholeContainer/CharFolderSelectionSection/HBoxContainer3"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+tooltip_text = "Change the directory location of your 
+Mini Fantasy character folders."
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = ExtResource("2_vesud")
+text = "📂"
+icon_alignment = 1
+
+[node name="Spacer" type="Control" parent="PopupMenu/MarginContainer2/WholeContainer/CharFolderSelectionSection/HBoxContainer3"]
+custom_minimum_size = Vector2(4, 0)
+layout_mode = 2
+
+[node name="RefreshCharactersButton" type="Button" parent="PopupMenu/MarginContainer2/WholeContainer/CharFolderSelectionSection/HBoxContainer3"]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+tooltip_text = "If you've made changed to your characters folder this 
+button will re-fetch the list of folder names found there."
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = ExtResource("2_vesud")
+text = "🔃"
+icon_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PopupMenu/MarginContainer2/WholeContainer/CharFolderSelectionSection"]
+layout_mode = 2
+
+[node name="CharacterFolderPathLabel" type="Label" parent="PopupMenu/MarginContainer2/WholeContainer/CharFolderSelectionSection/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("2_50ln8")
+theme_override_font_sizes/font_size = 10
+text = "res://assets/characters"
+horizontal_alignment = 2
+
+[node name="HSeparator2" type="HSeparator" parent="PopupMenu/MarginContainer2/WholeContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SpriteFramesSection" type="VBoxContainer" parent="PopupMenu/MarginContainer2/WholeContainer"]
+layout_mode = 2
+
+[node name="FramesCheckLabel" type="Label" parent="PopupMenu/MarginContainer2/WholeContainer/SpriteFramesSection"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(325, 0)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "No SpriteFrames found, please generate them."
+autowrap_mode = 3
+
+[node name="Spacer2" type="Control" parent="PopupMenu/MarginContainer2/WholeContainer/SpriteFramesSection"]
+custom_minimum_size = Vector2(0, 15)
+layout_mode = 2
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="PopupMenu/MarginContainer2/WholeContainer/SpriteFramesSection"]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_constants/separation = 8
+
+[node name="GenerateSpritesButton" type="Button" parent="PopupMenu/MarginContainer2/WholeContainer/SpriteFramesSection/HBoxContainer4"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 10
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = ExtResource("2_vesud")
+text = "Generate SpriteFrames"
+
+[node name="PickSpriteFramesResourceButton" type="Button" parent="PopupMenu/MarginContainer2/WholeContainer/SpriteFramesSection/HBoxContainer4"]
+layout_mode = 2
+tooltip_text = "Change the resource we use
+for SpriteFrames."
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = ExtResource("2_vesud")
+text = "📂"
+
+[node name="HBoxContainer5" type="HBoxContainer" parent="PopupMenu/MarginContainer2/WholeContainer/SpriteFramesSection"]
+layout_mode = 2
+alignment = 2
+
+[node name="SpriteFramesPathLabel" type="Label" parent="PopupMenu/MarginContainer2/WholeContainer/SpriteFramesSection/HBoxContainer5"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_50ln8")
+theme_override_font_sizes/font_size = 10
+text = "res://mini-fantasy-sprite-frames.res"
+
+[node name="HSeparator" type="HSeparator" parent="PopupMenu/MarginContainer2/WholeContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Spacer3" type="Control" parent="PopupMenu/MarginContainer2/WholeContainer"]
+custom_minimum_size = Vector2(0, 15)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+
+[node name="CharSelectionSection" type="VBoxContainer" parent="PopupMenu/MarginContainer2/WholeContainer"]
+layout_mode = 2
+mouse_default_cursor_shape = 2
+
+[node name="SelectCharacterInstructionsLabel" type="RichTextLabel" parent="PopupMenu/MarginContainer2/WholeContainer/CharSelectionSection"]
+layout_mode = 2
+bbcode_enabled = true
+text = "Select a character to generate [color=cyan]AnimatedSprite2Ds[/color] ([i]one base, one shadows[/i]), an [color=purple]AnimationPlayer[/color], and [color=purple]AnimationTree[/color] in the currently open scene."
+fit_content = true
+
+[node name="ItemList" type="ItemList" parent="PopupMenu/MarginContainer2/WholeContainer/CharSelectionSection"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_af5j7")
+theme_override_styles/hovered = SubResource("StyleBoxFlat_nwlhf")
+item_count = 1
+item_0/text = "MiniFantasy"
+item_0/disabled = true
+
+[node name="ItemTip" type="Label" parent="PopupMenu/MarginContainer2/WholeContainer/CharSelectionSection"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 3
+mouse_default_cursor_shape = 2
+theme_override_font_sizes/font_size = 10
+text = "Disabled entires indicate that we couldn't find SpriteFrames for that character. 
+Try generating SpriteFrames again or check your folder structures."
+autowrap_mode = 3
+
+[node name="DocsButton" type="Button" parent="PopupMenu/MarginContainer2/WholeContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 10
+theme_override_styles/normal = ExtResource("2_vesud")
+text = "How to use 📄"
+
+[node name="SpriteFramesResourceFolderDialog" type="FileDialog" parent="PopupMenu"]
+unique_name_in_owner = true
+title = "Open a Directory"
+initial_position = 1
+size = Vector2i(400, 450)
+ok_button_text = "Select Current Folder"
+dialog_hide_on_ok = true
+file_mode = 2
+
+[node name="CharacterFolderDialog" type="FileDialog" parent="PopupMenu"]
+unique_name_in_owner = true
+title = "Open a Directory"
+initial_position = 1
+size = Vector2i(600, 400)
+ok_button_text = "Select Current Folder"
+dialog_hide_on_ok = true
+file_mode = 2
+
+[node name="AcceptDialog" type="AcceptDialog" parent="PopupMenu"]
+unique_name_in_owner = true
+title = "How to use the generated nodes"
+initial_position = 1
+size = Vector2i(750, 550)
+visible = true
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PopupMenu/AcceptDialog"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 742.0
+offset_bottom = 501.0
+focus_mode = 2
+theme_override_fonts/mono_font = ExtResource("2_50ln8")
+bbcode_enabled = true
+text = "If you just use [color=cyan]AnimatedSprite2D[/color]s then you may delete the additonal [color=magenta]AnimationPlayer[/color] and [color=magenta]AnimationTree[/color] and leverage the sprites however you like.
+
+If you further use [color=magenta]AnimationPlayer[/color]s then likewise just remove the [color=magenta]AnimationTree[/color] and use how you normally would.
+
+If you would like to use the entire setup you should;
+[ul]
+Set the [color=magenta]AnimationTree[/color]'s Advance Expression Base Node to some node [color=green]Foo[/color] ([i]this could be itself[/i])
+Give [color=green]Foo[/color] a script and variables [code]is_moving[/code], [code]is_attacking[/code], and [code]is_dead[/code]
+Update these variables whenever appropriate
+Update the blend position of the [color=magenta]AnimationTree[/color]'s parameters with the entity's direction
+[/ul]
+
+An updater might look like; 
+[code]
+func update_blends(direction: Vector2) -> void:
+    animation_tree.set(\"parameters/Idles/blend_position\", direction)
+    animation_tree.set(\"parameters/Walks/blend_position\", direction)
+    animation_tree.set(\"parameters/Attacks/blend_position\", direction)
+[/code]"
+selection_enabled = true
+
+[connection signal="close_requested" from="." to="." method="_on_close_requested"]
+[connection signal="pressed" from="PopupMenu/MarginContainer2/WholeContainer/CharFolderSelectionSection/HBoxContainer3/ChangeCharacterFolderButton" to="." method="_on_change_character_folder_button_pressed"]
+[connection signal="pressed" from="PopupMenu/MarginContainer2/WholeContainer/CharFolderSelectionSection/HBoxContainer3/RefreshCharactersButton" to="." method="_on_refresh_characters_button_pressed"]
+[connection signal="pressed" from="PopupMenu/MarginContainer2/WholeContainer/SpriteFramesSection/HBoxContainer4/GenerateSpritesButton" to="." method="_on_generate_sprites_button_pressed"]
+[connection signal="pressed" from="PopupMenu/MarginContainer2/WholeContainer/SpriteFramesSection/HBoxContainer4/PickSpriteFramesResourceButton" to="." method="_on_pick_sprite_frames_resource_button_pressed"]
+[connection signal="item_selected" from="PopupMenu/MarginContainer2/WholeContainer/CharSelectionSection/ItemList" to="." method="_on_item_list_item_selected"]
+[connection signal="pressed" from="PopupMenu/MarginContainer2/WholeContainer/DocsButton" to="." method="_on_docs_button_pressed"]
+[connection signal="dir_selected" from="PopupMenu/SpriteFramesResourceFolderDialog" to="." method="_on_sprite_frames_resource_file_dialog_dir_selected"]
+[connection signal="dir_selected" from="PopupMenu/CharacterFolderDialog" to="." method="_on_character_folder_dialog_dir_selected"]
