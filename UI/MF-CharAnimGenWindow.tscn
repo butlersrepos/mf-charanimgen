@@ -124,7 +124,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("2_50ln8")
 theme_override_font_sizes/font_size = 10
-text = "res://assets/characters"
+text = "res://Assets/Characters/MiniFantasy"
 horizontal_alignment = 2
 
 [node name="HSeparator2" type="HSeparator" parent="PopupMenu/MarginContainer2/WholeContainer"]
@@ -139,7 +139,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(325, 0)
 layout_mode = 2
 mouse_default_cursor_shape = 2
-text = "No SpriteFrames found, please generate them."
+text = "✅ All characters have some SpriteFrames."
 autowrap_mode = 3
 
 [node name="Spacer2" type="Control" parent="PopupMenu/MarginContainer2/WholeContainer/SpriteFramesSection"]
@@ -205,9 +205,13 @@ size_flags_vertical = 3
 mouse_default_cursor_shape = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_af5j7")
 theme_override_styles/hovered = SubResource("StyleBoxFlat_nwlhf")
-item_count = 1
-item_0/text = "MiniFantasy"
-item_0/disabled = true
+item_count = 6
+item_0/text = "Druid"
+item_1/text = "Paladin"
+item_2/text = "Reanimated_Zombie_Warrior"
+item_3/text = "Rogue"
+item_4/text = "Troll"
+item_5/text = "Zombie_Bear"
 
 [node name="ItemTip" type="Label" parent="PopupMenu/MarginContainer2/WholeContainer/CharSelectionSection"]
 unique_name_in_owner = true
@@ -251,7 +255,6 @@ unique_name_in_owner = true
 title = "How to use the generated nodes"
 initial_position = 1
 size = Vector2i(750, 550)
-visible = true
 
 [node name="RichTextLabel" type="RichTextLabel" parent="PopupMenu/AcceptDialog"]
 offset_left = 8.0
@@ -281,6 +284,22 @@ func update_blends(direction: Vector2) -> void:
     animation_tree.set(\"parameters/Attacks/blend_position\", direction)
 [/code]"
 selection_enabled = true
+
+[node name="GenerationDoneDialog" type="AcceptDialog" parent="PopupMenu"]
+unique_name_in_owner = true
+title = "Nodes Generated!"
+initial_position = 1
+size = Vector2i(390, 250)
+
+[node name="Label" type="Label" parent="PopupMenu/GenerationDoneDialog"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 382.0
+offset_bottom = 201.0
+text = "Your new nodes should 
+be in the scene tree now!"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [connection signal="close_requested" from="." to="." method="_on_close_requested"]
 [connection signal="pressed" from="PopupMenu/MarginContainer2/WholeContainer/CharFolderSelectionSection/HBoxContainer3/ChangeCharacterFolderButton" to="." method="_on_change_character_folder_button_pressed"]

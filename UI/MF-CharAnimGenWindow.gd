@@ -13,14 +13,19 @@ const SPRITE_FRAMES_FILE_NAME_SETTING_KEY := "MF-CharAnimGen/sprite_frames_file_
 const DEFAULT_SPRITE_FRAMES_NAME := "mini-fantasy-sprite-frames"
 
 @onready var editor_settings = EditorInterface.get_editor_settings()
-@onready var frames_check_label: Label = %FramesCheckLabel
 @onready var item_list: ItemList = %ItemList
 @onready var popup_menu: Panel = %PopupMenu
+# Dialogs
 @onready var sprite_frames_resource_folder_dialog: FileDialog = %SpriteFramesResourceFolderDialog
 @onready var character_folder_dialog: FileDialog = %CharacterFolderDialog
 @onready var accept_dialog: AcceptDialog = %AcceptDialog
+@onready var generation_done_dialog: AcceptDialog = %GenerationDoneDialog
+# Labels
+@onready var frames_check_label: Label = %FramesCheckLabel
 @onready var sprite_frames_path_label: Label = %SpriteFramesPathLabel
 @onready var character_folder_path_label: Label = %CharacterFolderPathLabel
+
+# Persisted paths & files
 @onready var sprite_frames_file_name: String = editor_settings.get_setting(SPRITE_FRAMES_FILE_NAME_SETTING_KEY):
 	set(val):
 		sprite_frames_file_name = val
@@ -34,8 +39,6 @@ const DEFAULT_SPRITE_FRAMES_NAME := "mini-fantasy-sprite-frames"
 		character_folder_path_label.text = val
 		update_items()
 		update_frames_check()
-
-var characters: Array[String]
 
 @onready var sprite_frames_folder: String = editor_settings.get_setting(SPRITE_FRAMES_FOLDER_SETTING_KEY):
 	set(val):
@@ -56,7 +59,7 @@ var sprite_frames: SpriteFrames:
 	set(val):
 		sprite_frames = val
 		anim_names.assign([] if !sprite_frames else Array(sprite_frames.get_animation_names()))
-
+var characters: Array[String]
 var anim_names: Array[String] = []
 
 func _ready() -> void:
@@ -106,6 +109,8 @@ Menu GUI Interaction Handlers
 func _on_item_list_item_selected(index: int) -> void:
 	var folders = FileOps.get_all_folders(mini_fantasy_characters_folder)
 	generate_nodes(folders[index].to_lower())
+	generation_done_dialog.show()
+	
 
 func _on_generate_sprites_button_pressed() -> void:
 	MiniFantasySpriteFramesBuilder.create_sprite_frames_res(mini_fantasy_characters_folder, sprite_frames_folder, sprite_frames_file_name)
