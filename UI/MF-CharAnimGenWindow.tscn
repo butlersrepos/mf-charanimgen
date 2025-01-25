@@ -1,12 +1,14 @@
-[gd_scene load_steps=7 format=3 uid="uid://gh77bfrjn517"]
+[gd_scene load_steps=8 format=3 uid="uid://gh77bfrjn517"]
 
 [ext_resource type="Script" path="res://addons/MF-CharAnimGen/UI/MF-CharAnimGenWindow.gd" id="1_d2sop"]
 [ext_resource type="FontFile" uid="uid://dl3xwx45oi6v6" path="res://addons/MF-CharAnimGen/UI/RobotoMono-Regular.ttf" id="2_50ln8"]
 [ext_resource type="StyleBox" uid="uid://l0brguqmoxs1" path="res://addons/MF-CharAnimGen/UI/button_style_box_flat.tres" id="2_vesud"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_a1baj"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7uvl7"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_af5j7"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_b1a63"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v5fxn"]
 bg_color = Color(0.33, 0.33, 0.33, 1)
 corner_radius_top_left = 3
 corner_radius_top_right = 3
@@ -14,17 +16,16 @@ corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 corner_detail = 1
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nwlhf"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l3w02"]
 
 [node name="MFCharGenWindow" type="Window"]
 title = "Mini Fantasy Character Animation Builder"
 initial_position = 1
-size = Vector2i(450, 725)
+size = Vector2i(550, 1025)
 wrap_controls = true
 script = ExtResource("1_d2sop")
 
 [node name="PopupMenu" type="Panel" parent="."]
-unique_name_in_owner = true
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -33,6 +34,7 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="MarginContainer2" type="MarginContainer" parent="PopupMenu"]
 layout_mode = 1
@@ -62,7 +64,9 @@ size_flags_horizontal = 3
 size_flags_vertical = 0
 mouse_default_cursor_shape = 1
 theme_override_fonts/mono_font = ExtResource("2_50ln8")
-theme_override_styles/normal = SubResource("StyleBoxEmpty_a1baj")
+theme_override_font_sizes/mono_font_size = 22
+theme_override_font_sizes/normal_font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxEmpty_7uvl7")
 bbcode_enabled = true
 text = "Character asset folders should be wholly extracted into the same directory together, like
 [code]
@@ -89,6 +93,7 @@ mouse_default_cursor_shape = 2
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_default_cursor_shape = 2
+theme_override_font_sizes/font_size = 22
 text = "Select your characters folder ➡️"
 
 [node name="ChangeCharacterFolderButton" type="Button" parent="PopupMenu/MarginContainer2/WholeContainer/CharFolderSelectionSection/HBoxContainer3"]
@@ -123,7 +128,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_fonts/font = ExtResource("2_50ln8")
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 20
 text = "res://Assets/Characters/MiniFantasy"
 horizontal_alignment = 2
 
@@ -139,6 +144,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(325, 0)
 layout_mode = 2
 mouse_default_cursor_shape = 2
+theme_override_font_sizes/font_size = 22
 text = "✅ All characters have some SpriteFrames."
 autowrap_mode = 3
 
@@ -175,7 +181,7 @@ alignment = 2
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_50ln8")
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 20
 text = "res://mini-fantasy-sprite-frames.res"
 
 [node name="HSeparator" type="HSeparator" parent="PopupMenu/MarginContainer2/WholeContainer"]
@@ -193,6 +199,8 @@ mouse_default_cursor_shape = 2
 
 [node name="SelectCharacterInstructionsLabel" type="RichTextLabel" parent="PopupMenu/MarginContainer2/WholeContainer/CharSelectionSection"]
 layout_mode = 2
+theme_override_font_sizes/normal_font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxEmpty_b1a63")
 bbcode_enabled = true
 text = "Select a character to generate [color=cyan]AnimatedSprite2Ds[/color] ([i]one base, one shadows[/i]), an [color=purple]AnimationPlayer[/color], and [color=purple]AnimationTree[/color] in the currently open scene."
 fit_content = true
@@ -203,24 +211,25 @@ custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_af5j7")
-theme_override_styles/hovered = SubResource("StyleBoxFlat_nwlhf")
-item_count = 6
-item_0/text = "Druid"
+theme_override_styles/panel = SubResource("StyleBoxFlat_v5fxn")
+theme_override_styles/hovered = SubResource("StyleBoxFlat_l3w02")
+item_count = 7
+item_0/text = "Zombie_Bear"
 item_1/text = "Paladin"
-item_2/text = "Reanimated_Zombie_Warrior"
-item_3/text = "Rogue"
-item_4/text = "Troll"
-item_5/text = "Zombie_Bear"
+item_2/text = "Druid"
+item_3/text = "Troll"
+item_4/text = "Skeleton_Minotaur"
+item_5/text = "Reanimated_Zombie_Warrior"
+item_6/text = "Rogue"
 
 [node name="ItemTip" type="Label" parent="PopupMenu/MarginContainer2/WholeContainer/CharSelectionSection"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(350, 0)
+custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 3
 mouse_default_cursor_shape = 2
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 20
 text = "Disabled entires indicate that we couldn't find SpriteFrames for that character. 
 Try generating SpriteFrames again or check your folder structures."
 autowrap_mode = 3
@@ -234,6 +243,7 @@ text = "How to use 📄"
 
 [node name="SpriteFramesResourceFolderDialog" type="FileDialog" parent="PopupMenu"]
 unique_name_in_owner = true
+auto_translate_mode = 1
 title = "Open a Directory"
 initial_position = 1
 size = Vector2i(400, 450)
@@ -243,6 +253,7 @@ file_mode = 2
 
 [node name="CharacterFolderDialog" type="FileDialog" parent="PopupMenu"]
 unique_name_in_owner = true
+auto_translate_mode = 1
 title = "Open a Directory"
 initial_position = 1
 size = Vector2i(600, 400)
@@ -252,6 +263,7 @@ file_mode = 2
 
 [node name="AcceptDialog" type="AcceptDialog" parent="PopupMenu"]
 unique_name_in_owner = true
+auto_translate_mode = 1
 title = "How to use the generated nodes"
 initial_position = 1
 size = Vector2i(750, 550)
@@ -287,6 +299,7 @@ selection_enabled = true
 
 [node name="GenerationDoneDialog" type="AcceptDialog" parent="PopupMenu"]
 unique_name_in_owner = true
+auto_translate_mode = 1
 title = "Nodes Generated!"
 initial_position = 1
 size = Vector2i(390, 250)
