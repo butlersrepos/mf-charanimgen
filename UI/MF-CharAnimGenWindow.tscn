@@ -21,7 +21,7 @@ corner_detail = 1
 [node name="MFCharGenWindow" type="Window"]
 title = "Mini Fantasy Character Animation Builder"
 initial_position = 1
-size = Vector2i(550, 1025)
+size = Vector2i(550, 1050)
 wrap_controls = true
 script = ExtResource("1_d2sop")
 
