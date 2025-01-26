@@ -1,16 +1,18 @@
 @tool
 class_name MiniFantasyAnimationTreeBuilder
 
-const DEFAULT_BLEND_POSITIONS = {
-	"upleft": Vector2(-1, -1),
-	#"up": Vector2(0, -1),
+const ORTHOGONAL_BLEND_POSITIONS = {
+	"up": Vector2(0, -1),
+	"right": Vector2(1, 0),
+	"down": Vector2(0, 0.9), # Slight offset to favor facing down(camera) while moving horizontally
+	"left": Vector2(-1, 0),
+}
+
+const DIAGONAL_BLEND_POSITIONS = {
 	"upright": Vector2(1, -1),
-	#"left": Vector2(-1, 0),
-	#"center": Vector2(0, 0),
-	#"right": Vector2(1, 0),
 	"downleft": Vector2(-1, 0.9), # Slight offset to maintain downward facing while moving horizontally
-	#"down": Vector2(0, 1),
-	"downright": Vector2(1, 0.9)
+	"downright": Vector2(1, 0.9),
+	"upleft": Vector2(-1, -1),
 }
 
 static func create_animation_tree(character: String) -> AnimationTree:
@@ -41,8 +43,8 @@ static func create_blend_space(character: String, action: String) -> AnimationNo
 	blend_space.auto_triangles = true
 	
 	# Add standard points
-	for direction in DEFAULT_BLEND_POSITIONS:
-		var pos = DEFAULT_BLEND_POSITIONS[direction]
+	for direction in DIAGONAL_BLEND_POSITIONS:
+		var pos = DIAGONAL_BLEND_POSITIONS[direction]
 		var animation_name = "%s-%s-%s" % [character, action, direction]
 		var point = AnimationNodeAnimation.new()
 		point.animation = animation_name

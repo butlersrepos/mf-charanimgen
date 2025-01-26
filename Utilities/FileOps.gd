@@ -64,3 +64,22 @@ static func save_node(savee: Node) -> void:
 		FileOps.save_res(packed_scene, "res://%s.res" % [savee.name])
 	else:
 		printerr("Failed to pack node")
+
+# Reads the animation info folder to discover sprite size
+static func get_dimensions_from_file(file_path: String) -> Vector2i:
+	if not FileAccess.file_exists(file_path):
+		printerr("File not found: ", file_path)
+		return Vector2i.ZERO
+		
+	var file = FileAccess.open(file_path, FileAccess.READ)
+	var content = file.get_as_text()
+	
+	var dimension_regex = RegEx.new()
+	dimension_regex.compile("(\\d+)x(\\d+)")
+	var result = dimension_regex.search(content)
+	if result:
+		var width = result.get_string(1).to_int()
+		var height = result.get_string(2).to_int()
+		return Vector2i(width, height)
+	
+	return Vector2i.ZERO
