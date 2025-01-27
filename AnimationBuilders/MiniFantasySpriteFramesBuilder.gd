@@ -70,8 +70,6 @@ static func process_sprite_folder(sprite_frames: SpriteFrames, folder_path: Stri
 			print_rich("[color=cyan]%s[/color] => [color=green]%s[/color] (%s)" % [png, anim_name, config])
 			# These types of animations all sync up to another animation, so empty frames are tolerable, check empty frames for others
 			var should_check_frames = config['is_shadow'] != true && config['is_effect'] != true && config['is_start'] != true && config['is_end'] != true && config['is_cycle'] != true && config['is_glow'] != true
-			if should_check_frames:
-				print_rich('[color=pink]Checking frames[/color]')
 			add_animation_row(sprite_frames, spritesheet, ss_img, anim_name, dimensions, [config['row']], should_check_frames)
 			sprite_frames.set_animation_loop(anim_name, config["is_looped"] if config['is_looped'] != null else false)
 	
@@ -86,16 +84,22 @@ static func add_animation_row(sprite_frames: SpriteFrames, ss: Texture2D, ss_img
 		sprite_frames.clear(anim_name)
 	else:
 		sprite_frames.add_animation(anim_name)
-	var hor_frames = ss.get_width() / dimensions.x
+	if should_check_frames:
+		print_rich('[color=pink]Checking frames[/color]')
+	var horizontal_frames = ss.get_width() / dimensions.x
+	for f in range(horizontal_frames):
+		# Setup empty frames, since we fill them in in reverse
+		sprite_frames.add_frame(anim_name, null)
 	for row in rows:
-		for f in range(hor_frames - 1, -1, -1):
+		for f in range(horizontal_frames - 1, -1, -1):
 			if should_check_frames and not frame_has_content(ss_img, row, f, dimensions):
+				sprite_frames.remove_frame(anim_name, f)
 				print_rich('[color=pink]Empty frame found: %s - %s,%s[/color]' % [anim_name, row, f])
 				continue
 			var atlas_texture: AtlasTexture = AtlasTexture.new()
 			atlas_texture.atlas = ss
 			atlas_texture.region = Rect2((f * dimensions.x), row * dimensions.y, dimensions.x, dimensions.y)
-			sprite_frames.add_frame(anim_name, atlas_texture, 1.0, f)
+			sprite_frames.set_frame(anim_name, f, atlas_texture)
 
 ## Perform a spiral check from the center to try and prove if there's any pixels ASAP
 static func frame_has_content(image: Image, row: int, frame: int, dimensions: Vector2i) -> bool:

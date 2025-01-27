@@ -26,6 +26,7 @@ wrap_controls = true
 script = ExtResource("1_d2sop")
 
 [node name="PopupMenu" type="Panel" parent="."]
+unique_name_in_owner = true
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -202,7 +203,7 @@ layout_mode = 2
 theme_override_font_sizes/normal_font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxEmpty_b1a63")
 bbcode_enabled = true
-text = "Select a character to generate [color=cyan]AnimatedSprite2Ds[/color] ([i]one base, one shadows[/i]), an [color=purple]AnimationPlayer[/color], and [color=purple]AnimationTree[/color] in the currently open scene."
+text = "Select a character to generate [color=cyan]AnimatedSprite2Ds[/color] ([i]one base, one effects[/i]), an [color=purple]AnimationPlayer[/color], and [color=purple]AnimationTree[/color] in the currently open scene."
 fit_content = true
 
 [node name="ItemList" type="ItemList" parent="PopupMenu/MarginContainer2/WholeContainer/CharSelectionSection"]

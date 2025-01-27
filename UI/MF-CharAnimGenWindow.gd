@@ -144,20 +144,21 @@ func generate_nodes(name: String):
 	base_animated_sprite_2d.owner = root
 	base_animated_sprite_2d.name = "MF-BaseSprite"
 	
-	var shadow_animated_sprite_2d = AnimatedSprite2D.new()
-	root.add_child(shadow_animated_sprite_2d)
-	shadow_animated_sprite_2d.sprite_frames = sprite_frames
-	shadow_animated_sprite_2d.owner = root
-	shadow_animated_sprite_2d.name = "MF-ShadowSprite"
+	var effects_animated_sprite_2d = AnimatedSprite2D.new()
+	root.add_child(effects_animated_sprite_2d)
+	effects_animated_sprite_2d.sprite_frames = sprite_frames
+	effects_animated_sprite_2d.owner = root
+	effects_animated_sprite_2d.name = "MF-EffectsSprite"
 	
 	var anim_library = MiniFantasyAnimationLibraryBuilder.create_anim_library(
 		name,
 		sprite_frames,
 		base_animated_sprite_2d,
-		shadow_animated_sprite_2d
+		effects_animated_sprite_2d
 	)
 	
 	var anim_player = AnimationPlayer.new()
+	anim_player.deterministic = true
 	anim_player.add_animation_library("", anim_library)
 	root.add_child(anim_player)
 	anim_player.owner = root
@@ -165,6 +166,7 @@ func generate_nodes(name: String):
 	
 	var anim_tree = MiniFantasyAnimationTreeBuilder.create_animation_tree(
 		name,
+		anim_library
 	)
 	
 	root.add_child(anim_tree)
@@ -173,6 +175,6 @@ func generate_nodes(name: String):
 	anim_tree.anim_player = anim_tree.get_path_to(anim_player)
 
 	root.move_child(base_animated_sprite_2d, 0)
-	root.move_child(shadow_animated_sprite_2d, 1)
+	root.move_child(effects_animated_sprite_2d, 1)
 	root.move_child(anim_player, 2)
 	root.move_child(anim_tree, 3)

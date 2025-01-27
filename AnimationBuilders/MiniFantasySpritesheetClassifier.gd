@@ -200,3 +200,48 @@ static func build_anim_name(config: Dictionary) -> String:
 	])
 	var name = "%s-%s%s%s" % [config['entity'], config['action'], '-%s' % [direction['name']] if direction else '', suffixes]
 	return name
+
+static func decipher_name(anim_name: String) -> Dictionary:
+	# {entity}-{action}-{?direction}-{?lifecycle}-{?shadow/glow}
+	var parts: Array = Array(anim_name.split('-'))
+	var info = {
+		'anim_name': anim_name,
+		'entity': parts[0],
+		'action': parts[1],
+		'direction': 'none',
+		'is_directional': null,
+		'is_diagonal': null,
+		'is_orthogonal': null,
+		'is_shadow': null,
+		'is_glow': null,
+		'is_start': null,
+		'is_end': null,
+		'is_cycle': null,
+		'is_effect': null,
+		'is_without_effect': null,
+		'is_looped': null,
+	}
+	if parts.any(func(p): return p == 'shadow'):
+		info['is_shadow'] = true
+	if parts.any(func(p): return p == 'effect'):
+		info['is_effect'] = true
+	if parts.any(func(p): return p == 'start'):
+		info['is_start'] = true
+	if parts.any(func(p): return p == 'cycle'):
+		info['is_cycle'] = true
+	if parts.any(func(p): return p == 'end'):
+		info['is_end'] = true
+	if parts.any(func(p): return p == 'without'):
+		info['is_without_effect'] = true
+	
+	if LOOPS.has(info['action']):
+		info['is_looped'] = true
+	
+	if parts.size() >= 3 and ['up', 'down', 'left', 'right'].any(func(x): return parts[2].containsn(x)):
+		info['direction'] = parts[2]
+		if DIAGONAL_DIRECTIONS.any(func(d): return d['name'] == parts[2]):
+			info['is_diagonal'] = true
+		if ORTHOGONAL_DIRECTIONS.any(func(d): return d['name'] == parts[2]):
+			info['is_orthogonal'] = true
+
+	return info

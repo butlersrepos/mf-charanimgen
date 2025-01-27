@@ -1,10 +1,15 @@
 @tool
+extends EditorScript
 class_name MiniFantasyAnimationLibraryBuilder
 
 var path_to_sprite_frames: String = "res://mini-fantasy-sprite-frames.res"
 var mini_fantasy_animated_sprite_name: String = "MiniFantasyAnimatedSprite2D"
 
-static func create_anim_library(character: String, sprite_frames: SpriteFrames, base_sprite: AnimatedSprite2D, shadow_sprite: AnimatedSprite2D) -> AnimationLibrary:
+func _run() -> void:
+	var library = create_anim_library("paladin", load(path_to_sprite_frames), AnimatedSprite2D.new(), AnimatedSprite2D.new())
+	FileOps.save_res(library, "res://test-library.res")
+
+static func create_anim_library(character: String, sprite_frames: SpriteFrames, base_sprite: AnimatedSprite2D, effects_sprite: AnimatedSprite2D) -> AnimationLibrary:
 	var library = AnimationLibrary.new()
 	
 	var char_frames = Array(sprite_frames.get_animation_names()).filter(func(a: String):
@@ -26,28 +31,30 @@ static func create_anim_library(character: String, sprite_frames: SpriteFrames, 
 		for i in frame_count:
 			animation.track_insert_key(frames_track, i * frame_interval, i)
 		
-		# We'll add the shadow if we found one
+		# We'll add the shadow/glow if we found one
 		var shadow_anim = anim_name + "-shadow"
-		if sprite_frames.has_animation(shadow_anim):
-			var shadow_frames = sprite_frames.get_frame_count(shadow_anim)
+		var glow_anim = anim_name + '-glow';
+		if sprite_frames.has_animation(shadow_anim) or sprite_frames.has_animation(glow_anim):
+			var effect_anim = shadow_anim if sprite_frames.has_animation(shadow_anim) else glow_anim
+			var effect_frames = sprite_frames.get_frame_count(effect_anim)
 			# Setup the third track to set the current animation of the shadow sprite immediately, like "troll-idle-downleft-shadow"
-			var shadow_anim_track = animation.add_track(Animation.TYPE_VALUE)
-			animation.value_track_set_update_mode(shadow_anim_track, Animation.UPDATE_DISCRETE)
-			animation.track_set_path(shadow_anim_track, "%s:animation" % [shadow_sprite.name])
-			animation.track_insert_key(shadow_anim_track, 0, shadow_anim)
+			var effect_anim_track = animation.add_track(Animation.TYPE_VALUE)
+			animation.value_track_set_update_mode(effect_anim_track, Animation.UPDATE_DISCRETE)
+			animation.track_set_path(effect_anim_track, "%s:animation" % [effects_sprite.name])
+			animation.track_insert_key(effect_anim_track, 0, effect_anim)
 			# Setup the fourth track to iterate through the shadow frames until they're done
-			var shadow_frames_track = animation.add_track(Animation.TYPE_VALUE)
-			animation.value_track_set_update_mode(shadow_frames_track, Animation.UPDATE_DISCRETE)
-			animation.track_set_path(shadow_frames_track, "%s:frame" % [shadow_sprite.name])
-			for i in shadow_frames:
-				animation.track_insert_key(shadow_frames_track, i * frame_interval, i)
+			var effect_frames_track = animation.add_track(Animation.TYPE_VALUE)
+			animation.value_track_set_update_mode(effect_frames_track, Animation.UPDATE_DISCRETE)
+			animation.track_set_path(effect_frames_track, "%s:frame" % [effects_sprite.name])
+			for i in effect_frames:
+				animation.track_insert_key(effect_frames_track, i * frame_interval, i)
 		else:
 			# If there's no shadow then hide the shadow sprite to avoid default sprites showing conspicuously
-			var shadow_anim_track = animation.add_track(Animation.TYPE_VALUE)
-			animation.value_track_set_update_mode(shadow_anim_track, Animation.UPDATE_DISCRETE)
-			animation.track_set_path(shadow_anim_track, "%s:visible" % [shadow_sprite.name])
-			animation.track_insert_key(shadow_anim_track, 0, false)
-			animation.track_insert_key(shadow_anim_track, frame_count * frame_interval,true)
+			var effect_anim_track = animation.add_track(Animation.TYPE_VALUE)
+			animation.value_track_set_update_mode(effect_anim_track, Animation.UPDATE_DISCRETE)
+			animation.track_set_path(effect_anim_track, "%s:visible" % [effects_sprite.name])
+			animation.track_insert_key(effect_anim_track, 0, false)
+			animation.track_insert_key(effect_anim_track, frame_count * frame_interval,true)
 		# Set animation properties
 		animation.length = frame_count * frame_interval
 		animation.loop_mode = Animation.LOOP_LINEAR if sprite_frames.get_animation_loop(anim_name) else Animation.LOOP_NONE
