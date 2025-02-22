@@ -22,12 +22,12 @@ const BLEND_POSITIONS = {
 
 # These actions are pretty uniform and expected, if we find them we'll link them up
 const STANDARD_ACTIONS = {
-	'attack': {'condition': 'is_attacking', 'is_blocking': true},
-	'idle': {'condition': '!is_moving', 'is_blocking': false},
-	'walk': {'condition': 'is_moving', 'is_blocking': false},
-	'jump': {'condition': 'is_jumping', 'is_blocking': true},
-	'dmg': {'condition': 'is_hurt', 'is_blocking': true},
-	'die': {'condition': 'is_dead', 'is_blocking': false},
+	'attack': {'condition': 'is_attacking', 'is_blocking': ['idle', 'walk', 'dmg']},
+	'idle': {'condition': '!is_moving', 'is_blocking': []},
+	'walk': {'condition': 'is_moving', 'is_blocking': []},
+	'jump': {'condition': 'is_jumping', 'is_blocking': ['idle', 'walk', 'attack']},
+	'dmg': {'condition': 'is_hurt', 'is_blocking': ['idle', 'walk'] },
+	'die': {'condition': 'is_dead', 'is_blocking': []},
 }
 
 static func create_animation_tree(character: String, library: AnimationLibrary) -> AnimationTree:
@@ -124,7 +124,8 @@ static func add_standard_transitions(state_machine: AnimationNodeStateMachine, a
 					continue
 				if anim_infos.has(target_action):
 					var target_condition = STANDARD_ACTIONS[target_action]['condition']
-					var transition = create_at_end_transition(target_condition) if STANDARD_ACTIONS[action]['is_blocking'] else create_immediate_transition(target_condition)
+					var anim_blocks: Array = STANDARD_ACTIONS[action]['is_blocking']
+					var transition = create_at_end_transition(target_condition) if anim_blocks.has(target_action) else create_immediate_transition(target_condition)
 					state_machine.add_transition(action, target_action, transition)
 
 static func create_immediate_transition(condition: String, advance_mode: AnimationNodeStateMachineTransition.AdvanceMode = AnimationNodeStateMachineTransition.AdvanceMode.ADVANCE_MODE_AUTO) -> AnimationNodeStateMachineTransition:
