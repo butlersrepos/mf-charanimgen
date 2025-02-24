@@ -187,5 +187,5 @@ func generate_nodes(name: String):
 	root.move_child(base_animated_sprite_2d, 0)
 	root.move_child(effects_animated_sprite_2d, 1)
 	root.move_child(anim_player, 2)
-	root.move_child(anim_tree, 3)
-	root.move_child(hitbox_anim_player, 4)
+	root.move_child(hitbox_anim_player, 3)
+	root.move_child(anim_tree, 4)

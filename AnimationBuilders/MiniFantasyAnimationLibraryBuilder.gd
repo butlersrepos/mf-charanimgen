@@ -11,6 +11,7 @@ func _run() -> void:
 
 static func create_anim_library(character: String, sprite_frames: SpriteFrames, base_sprite: AnimatedSprite2D, effects_sprite: AnimatedSprite2D, hitbox_player: AnimationPlayer) -> AnimationLibrary:
 	var library = AnimationLibrary.new()
+	var hitbox_library = AnimationLibrary.new()
 	
 	var char_frames = Array(sprite_frames.get_animation_names()).filter(func(a: String):
 		return a.to_lower().begins_with(character)
@@ -71,8 +72,16 @@ static func create_anim_library(character: String, sprite_frames: SpriteFrames, 
 		animation.animation_track_insert_key(hitbox_track, 0, anim_name)
 		animation.animation_track_set_key_animation(hitbox_track, 0, anim_name)
 		
+		# Copy the track length and name into the HitBoxPlayer so it's easy to sync up and add hits
+		var hitbox_anim = Animation.new()
+		hitbox_anim.length = animation.length
+		hitbox_anim.loop_mode = animation.loop_mode
+		hitbox_library.add_animation(anim_name, hitbox_anim)
+		
 		# Add to library
 		library.add_animation(anim_name, animation)
 		if !library.has_animation('RESET') and anim_name.containsn('idle') and anim_name.containsn('down'):
 			library.add_animation('RESET', animation)
+	
+	hitbox_player.add_animation_library("", hitbox_library)
 	return library
