@@ -51,12 +51,23 @@ static func create_animation_tree(character: String, library: AnimationLibrary) 
 		anim_action_info.append(info)
 		longest_name = max(action.length(), longest_name)
 	
+	
+	var state_machine = create_state_machine(anim_infos, longest_name)
+	var top_tree = AnimationNodeBlendTree.new()
+	top_tree.add_node('StateMachine', state_machine, Vector2(-200,0))
+	top_tree.add_node('TimeScale', AnimationNodeTimeScale.new())
+	top_tree.connect_node('TimeScale', 0, 'StateMachine')
+	top_tree.connect_node('output', 0, 'TimeScale')
+	tree.tree_root = top_tree
+	tree.name = "MiniFantasyAnimationTree"
+	return tree
+	
+static func create_state_machine(anim_infos: Dictionary, longest_name: int):
 	# Track and place the nodes in two clusters, one for all the standardly connected ones, and an area with the rest left up to the user
 	var standard_nodes_index = 0
 	var other_nodes_index = 0
 	# Loose approximation to space the nodes in the editor so they don't overlap names
 	var node_width = longest_name * 18
-	
 	var state_machine = AnimationNodeStateMachine.new()
 	state_machine.set_node_position('Start', Vector2(-100, -100))
 	state_machine.set_node_position('End', Vector2(100, -100))
@@ -97,10 +108,7 @@ static func create_animation_tree(character: String, library: AnimationLibrary) 
 			other_nodes_index += 1
 	
 	add_standard_transitions(state_machine, anim_infos)
-	tree.tree_root = state_machine
-	tree.name = "MiniFantasyAnimationTree"
-	return tree
-	
+	return state_machine
 
 static func add_standard_transitions(state_machine: AnimationNodeStateMachine, anim_infos: Dictionary) -> void:
 	var is_wrapped_idle = anim_infos.has('activate') and anim_infos.has('deactivate')

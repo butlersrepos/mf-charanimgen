@@ -150,11 +150,22 @@ func generate_nodes(name: String):
 	effects_animated_sprite_2d.owner = root
 	effects_animated_sprite_2d.name = "MF-EffectsSprite"
 	
+	var hitbox_anim_player = root.find_child('MF-HitBoxPlayer', true, false)
+	if not hitbox_anim_player:
+		hitbox_anim_player = AnimationPlayer.new()
+		hitbox_anim_player.deterministic = true
+		
+		root.add_child(hitbox_anim_player)
+		hitbox_anim_player.owner = root
+		hitbox_anim_player.name = "MF-HitBoxPlayer"
+		hitbox_anim_player.editor_description = "Create tracks for hitboxes during attacks. They will automatically be played by the MF-AnimationPlayer. Don't delete this node even if it's empty."
+	
 	var anim_library = MiniFantasyAnimationLibraryBuilder.create_anim_library(
 		name,
 		sprite_frames,
 		base_animated_sprite_2d,
-		effects_animated_sprite_2d
+		effects_animated_sprite_2d,
+		hitbox_anim_player
 	)
 	
 	var anim_player = AnimationPlayer.new()
@@ -178,3 +189,4 @@ func generate_nodes(name: String):
 	root.move_child(effects_animated_sprite_2d, 1)
 	root.move_child(anim_player, 2)
 	root.move_child(anim_tree, 3)
+	root.move_child(hitbox_anim_player, 4)

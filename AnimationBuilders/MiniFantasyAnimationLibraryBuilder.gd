@@ -6,16 +6,22 @@ var path_to_sprite_frames: String = "res://mini-fantasy-sprite-frames.res"
 var mini_fantasy_animated_sprite_name: String = "MiniFantasyAnimatedSprite2D"
 
 func _run() -> void:
-	var library = create_anim_library("paladin", load(path_to_sprite_frames), AnimatedSprite2D.new(), AnimatedSprite2D.new())
+	var library = create_anim_library("paladin", load(path_to_sprite_frames), AnimatedSprite2D.new(), AnimatedSprite2D.new(), AnimationPlayer.new())
 	FileOps.save_res(library, "res://test-library.res")
 
-static func create_anim_library(character: String, sprite_frames: SpriteFrames, base_sprite: AnimatedSprite2D, effects_sprite: AnimatedSprite2D) -> AnimationLibrary:
+static func create_anim_library(character: String, sprite_frames: SpriteFrames, base_sprite: AnimatedSprite2D, effects_sprite: AnimatedSprite2D, hitbox_player: AnimationPlayer) -> AnimationLibrary:
 	var library = AnimationLibrary.new()
 	
 	var char_frames = Array(sprite_frames.get_animation_names()).filter(func(a: String):
 		return a.to_lower().begins_with(character)
 	)
+	var set_defaults = false
 	for anim_name in char_frames:
+		if String(anim_name).containsn('die') and not set_defaults:
+			base_sprite.animation = anim_name
+			effects_sprite.animation = anim_name
+			hitbox_player.current_animation = anim_name
+			set_defaults = true
 		var frame_count = sprite_frames.get_frame_count(anim_name)
 		var animation = Animation.new()
 		# Setup the first track to set the current animation of the sprite immediately, like "troll-idle-downleft"
@@ -59,6 +65,14 @@ static func create_anim_library(character: String, sprite_frames: SpriteFrames, 
 		animation.length = frame_count * frame_interval
 		animation.loop_mode = Animation.LOOP_LINEAR if sprite_frames.get_animation_loop(anim_name) else Animation.LOOP_NONE
 		
+		# Setup the fifth track to execute the hitbox player's track by the same name
+		var hitbox_track = animation.add_track(Animation.TYPE_ANIMATION)
+		animation.track_set_path(hitbox_track, "%s" % [hitbox_player.name])
+		animation.animation_track_insert_key(hitbox_track, 0, anim_name)
+		animation.animation_track_set_key_animation(hitbox_track, 0, anim_name)
+		
 		# Add to library
 		library.add_animation(anim_name, animation)
+		if !library.has_animation('RESET') and anim_name.containsn('idle') and anim_name.containsn('down'):
+			library.add_animation('RESET', animation)
 	return library
