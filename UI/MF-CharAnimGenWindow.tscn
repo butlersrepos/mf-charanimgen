@@ -183,7 +183,7 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_50ln8")
 theme_override_font_sizes/font_size = 20
-text = "res://mini-fantasy-sprite-frames.res"
+text = "res://Assets/mini-fantasy-sprite-frames.res"
 
 [node name="HSeparator" type="HSeparator" parent="PopupMenu/MarginContainer2/WholeContainer"]
 layout_mode = 2
@@ -214,14 +214,15 @@ size_flags_vertical = 3
 mouse_default_cursor_shape = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_v5fxn")
 theme_override_styles/hovered = SubResource("StyleBoxFlat_l3w02")
-item_count = 7
+item_count = 8
 item_0/text = "Zombie_Bear"
 item_1/text = "Paladin"
 item_2/text = "Druid"
 item_3/text = "Troll"
 item_4/text = "Skeleton_Minotaur"
-item_5/text = "Reanimated_Zombie_Warrior"
-item_6/text = "Rogue"
+item_5/text = "Cooker"
+item_6/text = "Reanimated_Zombie_Warrior"
+item_7/text = "Rogue"
 
 [node name="ItemTip" type="Label" parent="PopupMenu/MarginContainer2/WholeContainer/CharSelectionSection"]
 unique_name_in_owner = true

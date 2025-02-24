@@ -154,7 +154,6 @@ func generate_nodes(name: String):
 	if not hitbox_anim_player:
 		hitbox_anim_player = AnimationPlayer.new()
 		hitbox_anim_player.deterministic = true
-		
 		root.add_child(hitbox_anim_player)
 		hitbox_anim_player.owner = root
 		hitbox_anim_player.name = "MF-HitBoxPlayer"
