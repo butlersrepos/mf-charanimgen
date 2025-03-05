@@ -45,7 +45,7 @@ Special - Often a secondary version of an action (see: Wizard_Idle_Special.png)
 """
 const ANIM_MODS = ['effect', 'impact', 'projectile', 'special', 'start', 'cycle', 'end', 'diagonal', 'orthogonal', 'backlayer', 'frontlayer']
 # Things to remove and probably ignore
-const FLUFFS = ['minifantasy_trueheroes', 'minifantasy_npcs', 'layer 1', 'layer 2']
+const FLUFFS = ['minifantasy_trueheroes', 'minifantasy_npcs', 'minifantasy_spiderqueen', 'minifantasy_', 'layer 1', 'layer 2']
 const LIGHTINGS = ['shadow', 'glow']
 const unclassified = ['fly', 'disperse']
 const LOOPS = ['attack', 'walk', 'idle', 'fly', 'cycle']
@@ -84,7 +84,7 @@ static func animation_infos_from_sheet(entity_name: String, path: String, dimens
 		'is_looped': null,
 	}
 	# Starts like Entity/Shadows/Minifantasy_TrueHeroesEntityAttack.png
-	var path_no_fluff = FLUFFS.reduce(func(acc, f): return acc.replacen(f, ''), path).to_lower() # entity/shadow/entityattack.png
+	var path_no_fluff = FLUFFS.reduce(func(acc: String, f): return acc.replacen(f, ''), path).to_lower() # entity/shadow/entityattack.png
 	var path_no_ext = path.get_basename() # entity/shadows/entityattack
 	var path_segments = path_no_ext.split('/') # [entity, shadows, entityattack]
 	var containing_folder = path_segments[path_segments.size() - 2] # entity

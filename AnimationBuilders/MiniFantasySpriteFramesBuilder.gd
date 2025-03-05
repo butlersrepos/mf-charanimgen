@@ -78,7 +78,6 @@ static func process_sprite_folder(sprite_frames: SpriteFrames, folder_path: Stri
 
 static func add_animation_row(sprite_frames: SpriteFrames, ss: Texture2D, ss_img: Image, anim_name: String, dimensions: Vector2, rows: Array[int] = [0], should_check_frames: bool = false) -> void:
 	assert(ss.get_width() != 0 and dimensions.x != 0)
-	# TODO: Add empty frame detection, only for non-shadow/effect/start/end/cycle, start from center of last frame (skeleton_minotaur-idle
 	if sprite_frames.has_animation(anim_name):
 		print_debug("Animation '%s' already exists in sprite frames!\n\tRebuilding frames" % [anim_name])
 		sprite_frames.clear(anim_name)
