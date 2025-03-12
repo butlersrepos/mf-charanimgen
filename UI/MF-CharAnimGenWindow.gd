@@ -144,6 +144,12 @@ func generate_nodes(name: String):
 	base_animated_sprite_2d.owner = root
 	base_animated_sprite_2d.name = "MF-BaseSprite"
 	
+	var shadow_animated_sprite_2d = AnimatedSprite2D.new()
+	root.add_child(shadow_animated_sprite_2d)
+	shadow_animated_sprite_2d.sprite_frames = sprite_frames
+	shadow_animated_sprite_2d.owner = root
+	shadow_animated_sprite_2d.name = "MF-ShadowSprite"
+
 	var effects_animated_sprite_2d = AnimatedSprite2D.new()
 	root.add_child(effects_animated_sprite_2d)
 	effects_animated_sprite_2d.sprite_frames = sprite_frames
@@ -163,6 +169,7 @@ func generate_nodes(name: String):
 		name,
 		sprite_frames,
 		base_animated_sprite_2d,
+		shadow_animated_sprite_2d,
 		effects_animated_sprite_2d,
 		hitbox_anim_player
 	)
@@ -184,8 +191,9 @@ func generate_nodes(name: String):
 	anim_tree.name = "MF-AnimationTree"
 	anim_tree.anim_player = anim_tree.get_path_to(anim_player)
 
-	root.move_child(base_animated_sprite_2d, 0)
-	root.move_child(effects_animated_sprite_2d, 1)
-	root.move_child(anim_player, 2)
-	root.move_child(hitbox_anim_player, 3)
-	root.move_child(anim_tree, 4)
+	root.move_child(shadow_animated_sprite_2d, 0)
+	root.move_child(base_animated_sprite_2d, 1)
+	root.move_child(effects_animated_sprite_2d, 2)
+	root.move_child(anim_player, 3)
+	root.move_child(hitbox_anim_player, 4)
+	root.move_child(anim_tree, 5)
