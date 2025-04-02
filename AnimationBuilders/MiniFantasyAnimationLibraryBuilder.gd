@@ -5,7 +5,7 @@ class_name MiniFantasyAnimationLibraryBuilder
 var path_to_sprite_frames: String = "res://mini-fantasy-sprite-frames.res"
 var mini_fantasy_animated_sprite_name: String = "MiniFantasyAnimatedSprite2D"
 
-const frame_interval = 0.2 # 200ms?
+const frame_interval = 0.1 # 100ms?
 
 func _run() -> void:
 	var library = create_anim_library("paladin", load(path_to_sprite_frames), AnimatedSprite2D.new(), AnimatedSprite2D.new(), AnimatedSprite2D.new(), AnimationPlayer.new())
