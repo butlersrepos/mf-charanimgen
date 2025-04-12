@@ -48,7 +48,7 @@ const ANIM_MODS = ['effect', 'impact', 'projectile', 'special', 'start', 'cycle'
 const FLUFFS = ['minifantasy_trueheroes', 'minifantasy_npcs', 'minifantasy_spiderqueen', 'minifantasy_', 'layer 1', 'layer 2']
 const LIGHTINGS = ['shadow', 'glow']
 const unclassified = ['fly', 'disperse']
-const LOOPS = ['attack', 'walk', 'idle', 'fly', 'cycle']
+const LOOPS = ['walk', 'idle', 'fly', 'cycle']
 
 """
 NOTES: 
