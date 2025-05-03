@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://gh77bfrjn517"]
 
-[ext_resource type="Script" path="res://addons/MF-CharAnimGen/UI/MF-CharAnimGenWindow.gd" id="1_d2sop"]
+[ext_resource type="Script" uid="uid://wkmsndktrit2" path="res://addons/MF-CharAnimGen/UI/MF-CharAnimGenWindow.gd" id="1_d2sop"]
 [ext_resource type="FontFile" uid="uid://dl3xwx45oi6v6" path="res://addons/MF-CharAnimGen/UI/RobotoMono-Regular.ttf" id="2_50ln8"]
 [ext_resource type="StyleBox" uid="uid://l0brguqmoxs1" path="res://addons/MF-CharAnimGen/UI/button_style_box_flat.tres" id="2_vesud"]
 
