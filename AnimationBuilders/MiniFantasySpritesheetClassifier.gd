@@ -45,7 +45,7 @@ Special - Often a secondary version of an action (see: Wizard_Idle_Special.png)
 """
 const ANIM_MODS = ['effect', 'impact', 'projectile', 'special', 'start', 'cycle', 'end', 'diagonal', 'orthogonal', 'backlayer', 'frontlayer']
 # Things to remove and probably ignore
-const FLUFFS = ['minifantasy_giantspider', 'minifantasy_trueheroes', 'minifantasy_npcs', 'minifantasy_spiderqueen', 'minifantasy_', 'layer 1', 'layer 2']
+const FLUFFS = ['minifantasy_demonspider', 'minifantasy_giantspider', 'minifantasy_trueheroes', 'minifantasy_npcs', 'minifantasy_spiderqueen', 'minifantasy_', 'layer 1', 'layer 2']
 const LIGHTINGS = ['shadow', 'glow']
 const unclassified = ['fly', 'disperse']
 const LOOPS = ['walk', 'idle', 'fly', 'cycle']
