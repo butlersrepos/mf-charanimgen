@@ -116,6 +116,7 @@ static func create_anim_library(character: String, sprite_frames: SpriteFrames,
 					var animation_event_track = hitbox_anim.add_track(Animation.TYPE_METHOD)
 					hitbox_anim.track_set_path(animation_event_track, 'Components/AnimationComponent')
 					hitbox_anim.track_insert_key(animation_event_track, start_frame_time, {"method":'_on_animation_event', "args": [["strike"]]})
+					hitbox_anim.track_insert_key(animation_event_track, frame_count * frame_interval_in_s, {"method":'_on_animation_event', "args": [["done"]]})
 					unstruck = false
 				# Turn detection off on the next frame
 				# If there are two back-to-back hits then the second hit will overwrite this, creating the desired 2-consecutive frames of detection
