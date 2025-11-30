@@ -30,6 +30,10 @@ const STANDARD_ACTIONS = {
 	'die': {'condition': 'is_dead', 'is_blocking': []},
 }
 
+# Helper to colorcode all logs in this file
+static func myprint(msg: String) -> void:
+	print_rich('[color=darkgreen]MiniFantasyAnimationTreeBuilder[/color] ' + msg)
+
 static func create_animation_tree(character: String, library: AnimationLibrary) -> AnimationTree:
 	var tree = AnimationTree.new()
 	print(library.get_animation_list())
@@ -50,8 +54,8 @@ static func create_animation_tree(character: String, library: AnimationLibrary) 
 		var anim_action_info: Array = anim_infos.get_or_add(action, [])
 		anim_action_info.append(info)
 		longest_name = max(action.length(), longest_name)
-	
-	
+
+
 	var state_machine = create_state_machine(anim_infos, longest_name)
 	var top_tree = AnimationNodeBlendTree.new()
 	top_tree.add_node('StateMachine', state_machine, Vector2(-200,0))
@@ -61,7 +65,7 @@ static func create_animation_tree(character: String, library: AnimationLibrary) 
 	tree.tree_root = top_tree
 	tree.name = "MiniFantasyAnimationTree"
 	return tree
-	
+
 static func create_state_machine(anim_infos: Dictionary, longest_name: int):
 	# Track and place the nodes in two clusters, one for all the standardly connected ones, and an area with the rest left up to the user
 	var standard_nodes_index = 0
@@ -91,10 +95,10 @@ static func create_state_machine(anim_infos: Dictionary, longest_name: int):
 			var inner_machine = create_state_machine_box(enter_anims, main_anims, leave_anims, 'is_moving')
 			state_machine.add_node(action, inner_machine)
 		else:
-			var new_node = create_blend_space()		
+			var new_node = create_blend_space()
 			place_points_in_blend(anim_infos[action], new_node)
 			state_machine.add_node(action, new_node)
-		
+
 		# Place the nodes to not overlap in the AnimationTree editor
 		if STANDARD_ACTIONS.has(action):
 			var point = get_point_on_circle(standard_nodes_index, STANDARD_ACTIONS.keys().size())
@@ -106,7 +110,7 @@ static func create_state_machine(anim_infos: Dictionary, longest_name: int):
 			var y = (floor(other_nodes_index / 3) * 75) - 100
 			state_machine.set_node_position(action, Vector2(x, y))
 			other_nodes_index += 1
-	
+
 	add_standard_transitions(state_machine, anim_infos)
 	return state_machine
 
@@ -155,7 +159,7 @@ static func create_blend_space() -> AnimationNodeBlendSpace2D:
 	# Set up standard blend space configuration
 	blend_space.blend_mode = AnimationNodeBlendSpace2D.BLEND_MODE_DISCRETE
 	blend_space.auto_triangles = true
-	
+
 	return blend_space
 
 static func place_points_in_blend(actions: Array, space: AnimationNodeBlendSpace2D) -> void:
@@ -167,7 +171,7 @@ static func place_points_in_blend(actions: Array, space: AnimationNodeBlendSpace
 
 static func create_state_machine_box(enter_anims: Array, main_anims: Array, exit_anims: Array, exit_condition: String) -> AnimationNodeStateMachine:
 	var inner_machine = AnimationNodeStateMachine.new()
-	
+
 	var transition_in_blend = create_blend_space()
 	inner_machine.add_node("transition_in", transition_in_blend)
 	inner_machine.set_node_position("transition_in", Vector2(300, 200))

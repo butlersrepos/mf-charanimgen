@@ -19,6 +19,7 @@ corner_detail = 1
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l3w02"]
 
 [node name="MFCharGenWindow" type="Window"]
+oversampling_override = 1.0
 title = "Mini Fantasy Character Animation Builder"
 initial_position = 1
 size = Vector2i(550, 1050)
@@ -65,8 +66,8 @@ size_flags_horizontal = 3
 size_flags_vertical = 0
 mouse_default_cursor_shape = 1
 theme_override_fonts/mono_font = ExtResource("2_50ln8")
-theme_override_font_sizes/mono_font_size = 22
 theme_override_font_sizes/normal_font_size = 22
+theme_override_font_sizes/mono_font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxEmpty_7uvl7")
 bbcode_enabled = true
 text = "Character asset folders should be wholly extracted into the same directory together, like
@@ -214,15 +215,19 @@ size_flags_vertical = 3
 mouse_default_cursor_shape = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_v5fxn")
 theme_override_styles/hovered = SubResource("StyleBoxFlat_l3w02")
-item_count = 8
-item_0/text = "Zombie_Bear"
-item_1/text = "Paladin"
-item_2/text = "Druid"
-item_3/text = "Troll"
-item_4/text = "Skeleton_Minotaur"
-item_5/text = "Cooker"
-item_6/text = "Reanimated_Zombie_Warrior"
-item_7/text = "Rogue"
+item_count = 12
+item_0/text = "DemonSpider"
+item_1/text = "Zombie_Bear"
+item_2/text = "Giant Spider"
+item_3/text = "Paladin"
+item_4/text = "Cleric"
+item_5/text = "Druid"
+item_6/text = "Troll"
+item_7/text = "Skeleton_Minotaur"
+item_8/text = "Cooker"
+item_9/text = "Reanimated_Zombie_Warrior"
+item_10/text = "Rogue"
+item_11/text = "Spider_Queen"
 
 [node name="ItemTip" type="Label" parent="PopupMenu/MarginContainer2/WholeContainer/CharSelectionSection"]
 unique_name_in_owner = true

@@ -15,8 +15,8 @@ func _run() -> void:
 					i.erase(key)
 			return i
 		)
-		#print_rich("[indent]animations: %s[/indent]" % [infos.size()])
-		print_rich("[color=cyan]%s[/color] => [color=yellow]%s[/color]" % [png, infos])
+		#myprint("[indent]animations: %s[/indent]" % [infos.size()])
+		myprint("[color=cyan]%s[/color] => [color=yellow]%s[/color]" % [png, infos])
 
 const DIAGONAL_DIRECTIONS: Array[Dictionary] = [
 	{ "name": 'downright', "row": 0 },
@@ -51,7 +51,7 @@ const unclassified = ['fly', 'disperse']
 const LOOPS = ['walk', 'idle', 'fly', 'cycle']
 
 """
-NOTES: 
+NOTES:
 	- The presence of the entity's name in the filename usually denotes that the entity
 		is doing the action, the opposite is true as well, lack of an entity name in the
 		filename usually means it's an effect or a summon/pet.
@@ -119,12 +119,12 @@ static func animation_infos_from_sheet(entity_name: String, path: String, dimens
 			info['is_effect'] = true
 		else:
 			info['is_without_effect'] = true
-	
+
 	""" Handle special cases, early exits """
 	# Special case of "blah_blah_Foo&Bar", but very obvious
 	var anded_actions = anded_regex.search(filename)
 	if anded_actions:
-		print(anded_actions)
+		myprint(anded_actions)
 		# Make config for each action
 		var infos = [anded_actions.get_string(2), anded_actions.get_string(3)].map(func(a):
 			var i = info.duplicate()
@@ -133,7 +133,7 @@ static func animation_infos_from_sheet(entity_name: String, path: String, dimens
 				i['is_looped'] = true
 			# Make config for each direction is it's directional
 			if four_even_rows:
-				return range(4).map(func(n): 
+				return range(4).map(func(n):
 					var dir_info = i.duplicate()
 					dir_info['row'] = n
 					return dir_info
@@ -143,12 +143,12 @@ static func animation_infos_from_sheet(entity_name: String, path: String, dimens
 				return i
 		)
 		return DataUtils.flatten_array(infos)
-	
+
 	# Check for ones like "idle_activate_deactivate.png"
 	var filename_pieces = Array(filename.split('_'))
 	var actions_in_name = filename_pieces.filter(func(p): return ACTIONS.has(p))
 	if actions_in_name.size() >= 2 and sheet.get_height() / dimensions.y == actions_in_name.size():
-		print_rich('[color=purple]Handling multi-sheet[/color]')
+		myprint('[color=purple]Handling multi-sheet[/color]')
 		# Sort by order they're listed in, assume that is the row ordering
 		actions_in_name.sort_custom(func(a, b): return filename.findn(a) < filename.findn(b))
 		var infos = actions_in_name.map(func(act):
@@ -160,7 +160,7 @@ static func animation_infos_from_sheet(entity_name: String, path: String, dimens
 			return i
 		)
 		return DataUtils.flatten_array(infos)
-	
+
 	# General logic path for most sprites/actions
 	var action = sanitize_action(filename)
 	info['action'] = action
@@ -233,10 +233,10 @@ static func decipher_name(anim_name: String) -> Dictionary:
 		info['is_end'] = true
 	if parts.any(func(p): return p == 'without'):
 		info['is_without_effect'] = true
-	
+
 	if LOOPS.has(info['action']):
 		info['is_looped'] = true
-	
+
 	if parts.size() >= 3 and ['up', 'down', 'left', 'right'].any(func(x): return parts[2].containsn(x)):
 		info['direction'] = parts[2]
 		if DIAGONAL_DIRECTIONS.any(func(d): return d['name'] == parts[2]):
@@ -245,3 +245,7 @@ static func decipher_name(anim_name: String) -> Dictionary:
 			info['is_orthogonal'] = true
 
 	return info
+
+# Helper to colorcode all logs in this file
+static func myprint(msg: String) -> void:
+	print_rich('[color=lightblue]MiniFantasySpritesheetClassifier[/color] ' + msg)

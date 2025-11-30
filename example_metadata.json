@@ -1,0 +1,12 @@
+{
+	"frame_intervals": {
+		"attack": 100,
+		"die": 100,
+		"dmg": 100,
+		"idle": 200,
+		"walk": 200
+	},
+	"hit_frames": {
+		"attack": [2]
+	}
+}
