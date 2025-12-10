@@ -79,15 +79,19 @@ static func create_anim_library(character: String, sprite_frames: SpriteFrames,
 
 		# Create track for hitbox even if we don't have any auto-populated
 		var hitbox_position_track = hitbox_anim.add_track(Animation.TYPE_VALUE)
+		hitbox_anim.value_track_set_update_mode(hitbox_position_track, Animation.UPDATE_DISCRETE)
 		hitbox_anim.track_set_path(hitbox_position_track, 'HitBox:position')
 		hitbox_anim.track_insert_key(hitbox_position_track, 0, Vector2(0,0))
 		var hitbox_rotation_track = hitbox_anim.add_track(Animation.TYPE_VALUE)
+		hitbox_anim.value_track_set_update_mode(hitbox_rotation_track, Animation.UPDATE_DISCRETE)
 		hitbox_anim.track_set_path(hitbox_rotation_track, 'HitBox:rotation')
 		hitbox_anim.track_insert_key(hitbox_rotation_track, 0, 0.0)
 		var hurtbox_position_track = hitbox_anim.add_track(Animation.TYPE_VALUE)
+		hitbox_anim.value_track_set_update_mode(hurtbox_position_track, Animation.UPDATE_DISCRETE)
 		hitbox_anim.track_set_path(hurtbox_position_track, 'HurtBox:position')
 		hitbox_anim.track_insert_key(hurtbox_position_track, 0, Vector2(0,0))
 		var hurtbox_rotation_track = hitbox_anim.add_track(Animation.TYPE_VALUE)
+		hitbox_anim.value_track_set_update_mode(hurtbox_rotation_track, Animation.UPDATE_DISCRETE)
 		hitbox_anim.track_set_path(hurtbox_rotation_track, 'HurtBox:rotation')
 		hitbox_anim.track_insert_key(hurtbox_rotation_track, 0, 0.0)
 
@@ -160,7 +164,7 @@ static func build_support_sprite(anim_name: Variant, animation: Animation, sprit
 		animation.value_track_set_update_mode(sprite_visibility_track, Animation.UPDATE_DISCRETE)
 		animation.track_set_path(sprite_visibility_track, "%s:visible" % [sprite.name])
 		animation.track_insert_key(sprite_visibility_track, 0, false)
-		animation.track_insert_key(sprite_visibility_track, parent_frame_count * frame_interval, true)
+		animation.track_insert_key(sprite_visibility_track, (parent_frame_count * frame_interval) + ANTI_FLICKER_ADJUSTMENT, true)
 
 static func build_effects_sprite(anim_name: String, animation: Animation, sprite: AnimatedSprite2D, sprite_frames: SpriteFrames, frame_interval: float):
 	var parent_anim_frame_count = sprite_frames.get_frame_count(anim_name)
