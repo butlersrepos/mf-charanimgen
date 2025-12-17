@@ -40,7 +40,7 @@ static func create_anim_library(character: String, sprite_frames: SpriteFrames,
 		# Action is like "attack", "idle", "walk", "die"
 		var this_action = details.get('action', '') as String
 		# Intervals are stores as milliseconds, here we convert to seconds
-		var frame_interval_in_s = safely_access(anim_metadata, 'frame_intervals.%s' % [this_action], default_frame_interval_ms) / 1000
+		var frame_interval_in_s = safely_access(anim_metadata, 'frame_intervals.%s' % [this_action], default_frame_interval_ms) / 1000.0
 		var frame_count = sprite_frames.get_frame_count(anim_name)
 		var animation = Animation.new()
 
@@ -103,25 +103,22 @@ static func create_anim_library(character: String, sprite_frames: SpriteFrames,
 			# All attacks should end by deactivating the detection
 			hitbox_anim.track_insert_key(hitbox_monitoring_track, frame_count * frame_interval_in_s, false)
 			# Set up hitbox activation based on metadata
-			print(anim_metadata)
 			var all_hit_frames: Array = safely_access(anim_metadata, 'hit_frames.attack', [])
-			print(all_hit_frames)
 			var this_attack_hits_on: Array = safely_access(anim_metadata, 'hit_frames.%s' % [this_action], [])
-			print(this_attack_hits_on)
 			var combined_hit_frames = all_hit_frames + this_attack_hits_on
 			myprint('Found hit frames: ' + ','.join(combined_hit_frames) + ' for action: ' + this_action)
-			var unstruck = true
+			var has_added_strike_call = false
 			for frame_num in combined_hit_frames:
 				# Check for hits starting at each configured HIT FRAME
 				var start_frame_time = frame_num * frame_interval_in_s
 				hitbox_anim.track_insert_key(hitbox_monitoring_track, start_frame_time, true)
-				if unstruck:
+				if not has_added_strike_call:
 					# Adds our custom event communication for "do hit logic here" to the hit frame
 					var animation_event_track = hitbox_anim.add_track(Animation.TYPE_METHOD)
 					hitbox_anim.track_set_path(animation_event_track, 'Components/AnimationComponent')
 					hitbox_anim.track_insert_key(animation_event_track, start_frame_time, {"method":'_on_animation_event', "args": [["strike"]]})
 					hitbox_anim.track_insert_key(animation_event_track, frame_count * frame_interval_in_s, {"method":'_on_animation_event', "args": [["done"]]})
-					unstruck = false
+					has_added_strike_call = true
 				# Turn detection off on the next frame
 				# If there are two back-to-back hits then the second hit will overwrite this, creating the desired 2-consecutive frames of detection
 				var end_frame_time = (frame_num + 1) * frame_interval_in_s
@@ -171,6 +168,20 @@ static func build_effects_sprite(anim_name: String, animation: Animation, sprite
 	var glow_anim_name = anim_name + '-glow';
 	var effect_anim_name = anim_name + '-effect'
 	var effect_anim = glow_anim_name if sprite_frames.has_animation(glow_anim_name) else effect_anim_name if sprite_frames.has_animation(effect_anim_name) else null
+	
+	# If no standard effect found, check for front/back attack effect variants.
+	# Some spritesheets use separate "attackf" (front) and "attackb" (back) effects
+	# for more depth - we use front for down-facing, back for up-facing animations.
+	# e.g. "zombie_bear-attack-downleft" -> "zombie_bear-attackf-downleft-effect"
+	if effect_anim == null and anim_name.containsn('attack'):
+		var is_up_direction = anim_name.containsn('up')
+		# Replace "-attack-" with "-attackb-" or "-attackf-" based on direction
+		var variant_suffix = 'b' if is_up_direction else 'f'
+		var variant_base = anim_name.replace('-attack-', '-attack%s-' % variant_suffix)
+		var variant_glow_name = variant_base + '-glow'
+		var variant_effect_name = variant_base + '-effect'
+		effect_anim = variant_glow_name if sprite_frames.has_animation(variant_glow_name) else variant_effect_name if sprite_frames.has_animation(variant_effect_name) else null
+	
 	# Build regardless of existence since the builder also handles non-existence by hiding the sprite
 	build_support_sprite(effect_anim, animation, sprite, sprite_frames, parent_anim_frame_count, frame_interval)
 
@@ -186,12 +197,9 @@ static func safely_access(dict: Dictionary, path: String, default_return: Varian
 	var current = dict
 	for idx in range(keys.size()):
 		var key: String = keys[idx]
-		myprint(key)
 		# If this is the last segment we wanted, i.e. Z in x.y.z, then default to the supplied default, if we aren't at the end then supply an empty Dictionary
 		var default = default_return if idx + 1 == keys.size() else {}
-		myprint(default)
 		current = current.get(key, default)
-		myprint(current)
 	return current
 
 # Helper to colorcode all logs in this file
