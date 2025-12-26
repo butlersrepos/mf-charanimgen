@@ -19,7 +19,7 @@ var menu_instance: MFCharGenWindow = MENU_SCENE.instantiate()
 
 func _ready() -> void:
 	pass
-	
+
 func _enter_tree():
 	var editor_settings = EditorInterface.get_editor_settings()
 	if not editor_settings.has_setting(CHARACTER_FOLDER_SETTING_KEY):
@@ -28,7 +28,7 @@ func _enter_tree():
 		editor_settings.set_setting(SPRITE_FRAMES_FOLDER_SETTING_KEY, DEFAULT_SPRITE_FRAMES_FOLDER)
 	if not editor_settings.has_setting(SPRITE_FRAMES_FILE_NAME_SETTING_KEY):
 		editor_settings.set_setting(SPRITE_FRAMES_FILE_NAME_SETTING_KEY, DEFAULT_SPRITE_FRAMES_NAME)
-		
+
 	add_tool_menu_item(menu_item_title, func():
 		if menu_instance == null:
 			menu_instance = MENU_SCENE.instantiate()
@@ -38,7 +38,7 @@ func _enter_tree():
 		else:
 			add_child(menu_instance)
 	)
-	
+
 func _exit_tree():
 	remove_tool_menu_item(menu_item_title)
 	if menu_instance:
