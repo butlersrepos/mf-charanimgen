@@ -191,6 +191,8 @@ func generate_nodes(folder_name: String):
 		hitbox_anim_player.owner = root
 		hitbox_anim_player.name = "MF-HitBoxPlayer"
 		hitbox_anim_player.editor_description = "Create tracks for hitboxes during attacks. They will automatically be played by the MF-AnimationPlayer. Don't delete this node even if it's empty."
+	if parent != root:
+		hitbox_anim_player.root_node = NodePath("../..")
 
 	var anim_library = MiniFantasyAnimationLibraryBuilder.create_anim_library(
 		name,
