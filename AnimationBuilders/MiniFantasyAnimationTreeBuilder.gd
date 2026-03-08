@@ -157,7 +157,7 @@ static func add_custom_activity_transitions(state_machine: AnimationNodeStateMac
 		# walk ↔ activity
 		if anim_infos.has('walk'):
 			state_machine.add_transition("walk", action,
-				create_at_end_transition(condition))
+				create_immediate_transition(condition))
 			state_machine.add_transition(action, "walk",
 				create_at_end_transition("is_moving and !%s" % condition))
 
