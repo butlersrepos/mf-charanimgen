@@ -112,6 +112,7 @@ static func create_state_machine(anim_infos: Dictionary, longest_name: int):
 			other_nodes_index += 1
 
 	add_standard_transitions(state_machine, anim_infos)
+	add_custom_activity_transitions(state_machine, anim_infos)
 	return state_machine
 
 static func add_standard_transitions(state_machine: AnimationNodeStateMachine, anim_infos: Dictionary) -> void:
@@ -139,6 +140,36 @@ static func add_standard_transitions(state_machine: AnimationNodeStateMachine, a
 					var anim_blocks: Array = STANDARD_ACTIONS[action]['is_blocking']
 					var transition = create_at_end_transition(target_condition) if anim_blocks.has(target_action) else create_immediate_transition(target_condition)
 					state_machine.add_transition(action, target_action, transition)
+
+static func add_custom_activity_transitions(state_machine: AnimationNodeStateMachine, anim_infos: Dictionary) -> void:
+	for action: String in anim_infos:
+		if STANDARD_ACTIONS.has(action) or action == 'activate' or action == 'deactivate':
+			continue
+		var condition = "is_%s" % action
+
+		# idle ↔ activity
+		if anim_infos.has('idle'):
+			state_machine.add_transition("idle", action,
+				create_immediate_transition(condition))
+			state_machine.add_transition(action, "idle",
+				create_at_end_transition("!%s" % condition))
+
+		# walk ↔ activity
+		if anim_infos.has('walk'):
+			state_machine.add_transition("walk", action,
+				create_at_end_transition(condition))
+			state_machine.add_transition(action, "walk",
+				create_at_end_transition("is_moving and !%s" % condition))
+
+		# Always interruptible by die
+		if anim_infos.has('die'):
+			state_machine.add_transition(action, "die",
+				create_immediate_transition("is_dead"))
+
+		# Interruptible by damage (unflinching gates is_hurt upstream)
+		if anim_infos.has('dmg'):
+			state_machine.add_transition(action, "dmg",
+				create_immediate_transition("is_hurt"))
 
 static func create_immediate_transition(condition: String, advance_mode: AnimationNodeStateMachineTransition.AdvanceMode = AnimationNodeStateMachineTransition.AdvanceMode.ADVANCE_MODE_AUTO) -> AnimationNodeStateMachineTransition:
 	var transition = AnimationNodeStateMachineTransition.new()
