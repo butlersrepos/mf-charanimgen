@@ -162,29 +162,32 @@ func generate_nodes(folder_name: String):
 		myprint('Found animation metadata for ' + folder_name)
 	var name = folder_name.to_lower()
 	var root = EditorInterface.get_edited_scene_root()
+	var parent = root.find_child("Animations", false, false) if root else null
+	if not parent:
+		parent = root
 	var base_animated_sprite_2d = AnimatedSprite2D.new()
-	root.add_child(base_animated_sprite_2d)
+	parent.add_child(base_animated_sprite_2d)
 	base_animated_sprite_2d.sprite_frames = sprite_frames
 	base_animated_sprite_2d.owner = root
 	base_animated_sprite_2d.name = "MF-BaseSprite"
 
 	var shadow_animated_sprite_2d = AnimatedSprite2D.new()
-	root.add_child(shadow_animated_sprite_2d)
+	parent.add_child(shadow_animated_sprite_2d)
 	shadow_animated_sprite_2d.sprite_frames = sprite_frames
 	shadow_animated_sprite_2d.owner = root
 	shadow_animated_sprite_2d.name = "MF-ShadowSprite"
 
 	var effects_animated_sprite_2d = AnimatedSprite2D.new()
-	root.add_child(effects_animated_sprite_2d)
+	parent.add_child(effects_animated_sprite_2d)
 	effects_animated_sprite_2d.sprite_frames = sprite_frames
 	effects_animated_sprite_2d.owner = root
 	effects_animated_sprite_2d.name = "MF-EffectsSprite"
 
-	var hitbox_anim_player = root.find_child('MF-HitBoxPlayer', true, false)
+	var hitbox_anim_player = parent.find_child('MF-HitBoxPlayer', true, false)
 	if not hitbox_anim_player:
 		hitbox_anim_player = AnimationPlayer.new()
 		hitbox_anim_player.deterministic = true
-		root.add_child(hitbox_anim_player)
+		parent.add_child(hitbox_anim_player)
 		hitbox_anim_player.owner = root
 		hitbox_anim_player.name = "MF-HitBoxPlayer"
 		hitbox_anim_player.editor_description = "Create tracks for hitboxes during attacks. They will automatically be played by the MF-AnimationPlayer. Don't delete this node even if it's empty."
@@ -202,7 +205,7 @@ func generate_nodes(folder_name: String):
 	var anim_player = AnimationPlayer.new()
 	anim_player.deterministic = true
 	anim_player.add_animation_library("", anim_library)
-	root.add_child(anim_player)
+	parent.add_child(anim_player)
 	anim_player.owner = root
 	anim_player.name = "MF-AnimationPlayer"
 
@@ -211,17 +214,17 @@ func generate_nodes(folder_name: String):
 		anim_library
 	)
 
-	root.add_child(anim_tree)
+	parent.add_child(anim_tree)
 	anim_tree.owner = root
 	anim_tree.name = "MF-AnimationTree"
 	anim_tree.anim_player = anim_tree.get_path_to(anim_player)
 
-	root.move_child(shadow_animated_sprite_2d, 0)
-	root.move_child(base_animated_sprite_2d, 1)
-	root.move_child(effects_animated_sprite_2d, 2)
-	root.move_child(anim_player, 3)
-	root.move_child(hitbox_anim_player, 4)
-	root.move_child(anim_tree, 5)
+	parent.move_child(shadow_animated_sprite_2d, 0)
+	parent.move_child(base_animated_sprite_2d, 1)
+	parent.move_child(effects_animated_sprite_2d, 2)
+	parent.move_child(anim_player, 3)
+	parent.move_child(hitbox_anim_player, 4)
+	parent.move_child(anim_tree, 5)
 
 # Helper to colorcode all logs in this file
 static func myprint(msg: String) -> void:
