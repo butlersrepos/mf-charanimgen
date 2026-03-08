@@ -48,6 +48,11 @@ const ANIM_MODS = ['effect', 'impact', 'projectile', 'special', 'start', 'cycle'
 const FLUFFS = ['minifantasy_demonspider', 'minifantasy_giantspider', 'minifantasy_trueheroes', 'minifantasy_npcs', 'minifantasy_spiderqueen', 'minifantasy_', 'layer 1', 'layer 2']
 const LIGHTINGS = ['shadow', 'glow']
 const unclassified = ['fly', 'disperse']
+
+"""
+NOTE: Looping can be overriden after generation by toggling on a specific Animation within the SpriteFrames resource.
+This is just a default list for some looping animations that exist broadly.
+"""
 const LOOPS = ['walk', 'idle', 'fly', 'cycle']
 
 """
