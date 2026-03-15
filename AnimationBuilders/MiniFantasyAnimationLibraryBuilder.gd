@@ -39,9 +39,28 @@ static func create_anim_library(character: String, sprite_frames: SpriteFrames,
 		var details = MiniFantasySpritesheetClassifier.decipher_name(anim_name)
 		# Action is like "attack", "idle", "walk", "die"
 		var this_action = details.get('action', '') as String
-		# Intervals are stores as milliseconds, here we convert to seconds
-		var frame_interval_in_s = safely_access(anim_metadata, 'frame_intervals.%s' % [this_action], default_frame_interval_ms) / 1000.0
 		var frame_count = sprite_frames.get_frame_count(anim_name)
+
+		# Compute per-frame timing. Supports uniform (number) or per-frame (array) intervals.
+		var raw_interval = safely_access(anim_metadata, 'frame_intervals.%s' % [this_action], default_frame_interval_ms)
+		var frame_times = []  # cumulative start time for each frame
+		var total_length = 0.0
+		if typeof(raw_interval) == TYPE_ARRAY:
+			var interval_array = raw_interval as Array
+			var t = 0.0
+			for i in frame_count:
+				frame_times.append(t)
+				t += float(interval_array[i % interval_array.size()]) / 1000.0
+			total_length = t
+		else:
+			var interval_s = float(raw_interval) / 1000.0
+			for i in frame_count:
+				frame_times.append(i * interval_s)
+			total_length = frame_count * interval_s
+		var frame_interval_in_s = 0.1
+		if frame_count > 0:
+			frame_interval_in_s = total_length / frame_count
+
 		var animation = Animation.new()
 
 		# Setup the first track to set the current animation of the sprite immediately, like "troll-idle-downleft"
@@ -54,14 +73,14 @@ static func create_anim_library(character: String, sprite_frames: SpriteFrames,
 		animation.value_track_set_update_mode(frames_track, Animation.UPDATE_DISCRETE)
 		animation.track_set_path(frames_track, "%s:frame" % [base_sprite.name])
 		for i in frame_count:
-			animation.track_insert_key(frames_track, i * frame_interval_in_s, i)
+			animation.track_insert_key(frames_track, frame_times[i], i)
 
 		# We'll add the shadow & effect if we found one
 		build_shadow_sprite(anim_name, animation, shadow_sprite, sprite_frames, frame_interval_in_s)
 		build_effects_sprite(anim_name, animation, effects_sprite, sprite_frames, frame_interval_in_s)
 
 		# Set animation properties
-		animation.length = frame_count * frame_interval_in_s
+		animation.length = total_length
 		animation.loop_mode = Animation.LOOP_LINEAR if sprite_frames.get_animation_loop(anim_name) else Animation.LOOP_NONE
 
 		# Setup the last track to execute the hitbox player's track by the same name
@@ -101,7 +120,7 @@ static func create_anim_library(character: String, sprite_frames: SpriteFrames,
 			hitbox_anim.track_set_path(hitbox_monitoring_track, 'HitBox:monitoring')
 			hitbox_anim.track_insert_key(hitbox_monitoring_track, 0.0, false)
 			# All attacks should end by deactivating the detection
-			hitbox_anim.track_insert_key(hitbox_monitoring_track, frame_count * frame_interval_in_s, false)
+			hitbox_anim.track_insert_key(hitbox_monitoring_track, total_length, false)
 			# Set up hitbox activation based on metadata
 			var all_hit_frames: Array = safely_access(anim_metadata, 'hit_frames.attack', [])
 			var this_attack_hits_on: Array = safely_access(anim_metadata, 'hit_frames.%s' % [this_action], [])
@@ -110,7 +129,7 @@ static func create_anim_library(character: String, sprite_frames: SpriteFrames,
 			var has_added_strike_call = false
 			for frame_num in combined_hit_frames:
 				# Check for hits starting at each configured HIT FRAME
-				var start_frame_time = frame_num * frame_interval_in_s
+				var start_frame_time = frame_times[frame_num] if frame_num < frame_times.size() else total_length
 				hitbox_anim.track_insert_key(hitbox_monitoring_track, start_frame_time, true)
 				if not has_added_strike_call:
 					# Adds our custom event communication for "do hit logic here" to the hit frame
@@ -120,7 +139,7 @@ static func create_anim_library(character: String, sprite_frames: SpriteFrames,
 					has_added_strike_call = true
 				# Turn detection off on the next frame
 				# If there are two back-to-back hits then the second hit will overwrite this, creating the desired 2-consecutive frames of detection
-				var end_frame_time = (frame_num + 1) * frame_interval_in_s
+				var end_frame_time = frame_times[frame_num + 1] if frame_num + 1 < frame_times.size() else total_length
 				hitbox_anim.track_insert_key(hitbox_monitoring_track, end_frame_time, false)
 
 		# Add to library
