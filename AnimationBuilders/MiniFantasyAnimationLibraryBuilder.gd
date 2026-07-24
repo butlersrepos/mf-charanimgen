@@ -75,13 +75,14 @@ static func create_anim_library(character: String, sprite_frames: SpriteFrames,
 		for i in frame_count:
 			animation.track_insert_key(frames_track, frame_times[i], i)
 
+		# Set animation properties BEFORE the support-sprite builders — they
+		# read loop_mode to decide whether an end-of-animation hide key is legal
+		animation.length = total_length
+		animation.loop_mode = Animation.LOOP_LINEAR if sprite_frames.get_animation_loop(anim_name) else Animation.LOOP_NONE
+
 		# We'll add the shadow & effect if we found one
 		build_shadow_sprite(anim_name, animation, shadow_sprite, sprite_frames, frame_interval_in_s)
 		build_effects_sprite(anim_name, animation, effects_sprite, sprite_frames, frame_interval_in_s)
-
-		# Set animation properties
-		animation.length = total_length
-		animation.loop_mode = Animation.LOOP_LINEAR if sprite_frames.get_animation_loop(anim_name) else Animation.LOOP_NONE
 
 		# Setup the last track to execute the hitbox player's track by the same name
 		var hitbox_track = animation.add_track(Animation.TYPE_ANIMATION)
@@ -161,7 +162,12 @@ static func build_support_sprite(anim_name: Variant, animation: Animation, sprit
 		animation.value_track_set_update_mode(sprite_visibility_track, Animation.UPDATE_DISCRETE)
 		animation.track_set_path(sprite_visibility_track, "%s:visible" % [sprite.name])
 		animation.track_insert_key(sprite_visibility_track, 0, true)
-		animation.track_insert_key(sprite_visibility_track, parent_frame_count * frame_interval, false)
+		if animation.loop_mode == Animation.LOOP_NONE:
+			# Hide the support sprite once a one-shot animation completes. On a
+			# LOOPING animation this key must not exist: the playhead can land
+			# exactly on t == length for one rendered frame at the loop wrap,
+			# blinking the shadow off (the Paladin town-idle flicker).
+			animation.track_insert_key(sprite_visibility_track, parent_frame_count * frame_interval, false)
 		# Setup the fourth track to set the current animation of the sprite immediately, like "troll-idle-downleft-shadow"
 		var animation_name_track = animation.add_track(Animation.TYPE_VALUE)
 		animation.value_track_set_update_mode(animation_name_track, Animation.UPDATE_DISCRETE)
