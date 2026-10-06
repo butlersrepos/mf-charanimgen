@@ -118,6 +118,12 @@ static func create_anim_library(character: String, sprite_frames: SpriteFrames,
 		if this_action.containsn('attack'):
 			# All attacks should start with no active hitbox detection
 			var hitbox_monitoring_track = hitbox_anim.add_track(Animation.TYPE_VALUE)
+			# Discrete like the tracks above, and for a sharper reason: a continuous
+			# bool track blends as a number and flips where it crosses 0.5, HALFWAY
+			# between keys. Keys false@0, true@0.4, false@0.5 opened the HitBox at
+			# 0.2s and closed it at 0.45s (Godot 4.5.1); discrete opens at 0.4 and
+			# closes at 0.5, and a close key at exactly the clip length still fires.
+			hitbox_anim.value_track_set_update_mode(hitbox_monitoring_track, Animation.UPDATE_DISCRETE)
 			hitbox_anim.track_set_path(hitbox_monitoring_track, 'HitBox:monitoring')
 			hitbox_anim.track_insert_key(hitbox_monitoring_track, 0.0, false)
 			# All attacks should end by deactivating the detection
