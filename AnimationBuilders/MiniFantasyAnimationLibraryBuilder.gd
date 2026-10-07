@@ -128,26 +128,38 @@ static func create_anim_library(character: String, sprite_frames: SpriteFrames,
 			hitbox_anim.track_insert_key(hitbox_monitoring_track, 0.0, false)
 			# All attacks should end by deactivating the detection
 			hitbox_anim.track_insert_key(hitbox_monitoring_track, total_length, false)
-			# Set up hitbox activation based on metadata
-			var all_hit_frames: Array = safely_access(anim_metadata, 'hit_frames.attack', [])
-			var this_attack_hits_on: Array = safely_access(anim_metadata, 'hit_frames.%s' % [this_action], [])
-			var combined_hit_frames = all_hit_frames + this_attack_hits_on
-			myprint('Found hit frames: ' + ','.join(combined_hit_frames) + ' for action: ' + this_action)
-			var has_added_strike_call = false
-			for frame_num in combined_hit_frames:
+			# Set up hitbox activation based on metadata. An action's own entry
+			# REPLACES the shared "attack" default, so one rig can hit on different
+			# frames per attack: the Druid's root attack on 8 while Nature Strike
+			# keeps 2 (#1440). They used to be ADDED together, which gave the root
+			# attack two windows; no metadata relied on that.
+			var hit_frames = safely_access(anim_metadata, 'hit_frames.%s' % [this_action], null)
+			if hit_frames == null:
+				hit_frames = safely_access(anim_metadata, 'hit_frames.attack', [])
+			# Where the "strike" event lands. By default, on the first hit frame. Set
+			# "strike_frames" to fire it without any contact, or on other frames:
+			# the Skeleton Archer's bow releases on 5 and has no melee hit (#1440).
+			var strike_frames = safely_access(anim_metadata, 'strike_frames.%s' % [this_action], null)
+			if strike_frames == null:
+				strike_frames = safely_access(anim_metadata, 'strike_frames.attack', null)
+			if strike_frames == null:
+				strike_frames = (hit_frames as Array).slice(0, 1)
+			myprint('Found hit frames: ' + ','.join(hit_frames) + ', strike frames: ' + ','.join(strike_frames) + ' for action: ' + this_action)
+			for frame_num in hit_frames:
 				# Check for hits starting at each configured HIT FRAME
 				var start_frame_time = frame_times[frame_num] if frame_num < frame_times.size() else total_length
 				hitbox_anim.track_insert_key(hitbox_monitoring_track, start_frame_time, true)
-				if not has_added_strike_call:
-					# Adds our custom event communication for "do hit logic here" to the hit frame
-					var animation_event_track = hitbox_anim.add_track(Animation.TYPE_METHOD)
-					hitbox_anim.track_set_path(animation_event_track, 'Components/AnimationComponent')
-					hitbox_anim.track_insert_key(animation_event_track, start_frame_time, {"method":'_on_animation_event', "args": [["strike"]]})
-					has_added_strike_call = true
 				# Turn detection off on the next frame
 				# If there are two back-to-back hits then the second hit will overwrite this, creating the desired 2-consecutive frames of detection
 				var end_frame_time = frame_times[frame_num + 1] if frame_num + 1 < frame_times.size() else total_length
 				hitbox_anim.track_insert_key(hitbox_monitoring_track, end_frame_time, false)
+			if not (strike_frames as Array).is_empty():
+				# Adds our custom event communication for "do hit logic here" to each strike frame
+				var animation_event_track = hitbox_anim.add_track(Animation.TYPE_METHOD)
+				hitbox_anim.track_set_path(animation_event_track, 'Components/AnimationComponent')
+				for frame_num in strike_frames:
+					var strike_time = frame_times[frame_num] if frame_num < frame_times.size() else total_length
+					hitbox_anim.track_insert_key(animation_event_track, strike_time, {"method":'_on_animation_event', "args": [["strike"]]})
 
 		# Add to library
 		library.add_animation(anim_name, animation)
