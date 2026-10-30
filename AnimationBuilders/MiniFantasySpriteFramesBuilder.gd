@@ -73,6 +73,13 @@ static func process_sprite_folder(sprite_frames: SpriteFrames, folder_path: Stri
 			if normal_sheet == null or normal_sheet.get_size() != spritesheet.get_size():
 				push_error("Normal map must match its source sheet: %s" % normal_path)
 				return ERR_INVALID_DATA
+		var frame_sheet: Texture2D = spritesheet
+		if normal_sheet:
+			# Keep the atlas region on the outer texture; CanvasTexture stores only channel RIDs.
+			var canvas_texture := CanvasTexture.new()
+			canvas_texture.diffuse_texture = spritesheet
+			canvas_texture.normal_texture = normal_sheet
+			frame_sheet = canvas_texture
 		# This is costly, but enables frame checking for empty/short rows
 		var ss_img = spritesheet.get_image()
 		var anim_configs = MiniFantasySpritesheetClassifier.animation_infos_from_sheet(folder_name, png, dimensions, spritesheet)
@@ -90,13 +97,13 @@ static func process_sprite_folder(sprite_frames: SpriteFrames, folder_path: Stri
 			myprint("[color=cyan]%s[/color] => [color=green]%s[/color] (%s)" % [png, anim_name, config])
 			# These types of animations all sync up to another animation, so empty frames are tolerable, check empty frames for others
 			var should_check_frames = config['is_shadow'] != true && config['is_effect'] != true && config['is_start'] != true && config['is_end'] != true && config['is_cycle'] != true && config['is_glow'] != true
-			add_animation_row(sprite_frames, spritesheet, ss_img, anim_name, dimensions, [config['row']], should_check_frames, normal_sheet)
+			add_animation_row(sprite_frames, frame_sheet, ss_img, anim_name, dimensions, [config['row']], should_check_frames)
 			sprite_frames.set_animation_loop(anim_name, config["is_looped"] if config['is_looped'] != null else false)
 
 	# Write all the SpriteFrames out to a saved resource
 	return FileOps.save_res(sprite_frames, "%s/%s.res" % [output_folder, output_name])
 
-static func add_animation_row(sprite_frames: SpriteFrames, ss: Texture2D, ss_img: Image, anim_name: String, dimensions: Vector2, rows: Array[int] = [0], should_check_frames: bool = false, normal_sheet: Texture2D = null) -> void:
+static func add_animation_row(sprite_frames: SpriteFrames, ss: Texture2D, ss_img: Image, anim_name: String, dimensions: Vector2, rows: Array[int] = [0], should_check_frames: bool = false) -> void:
 	assert(ss.get_width() != 0 and dimensions.x != 0)
 	if sprite_frames.has_animation(anim_name):
 		myprint("Animation '%s' already exists in sprite frames!\n\tRebuilding frames" % [anim_name])
@@ -118,16 +125,7 @@ static func add_animation_row(sprite_frames: SpriteFrames, ss: Texture2D, ss_img
 			var atlas_texture: AtlasTexture = AtlasTexture.new()
 			atlas_texture.atlas = ss
 			atlas_texture.region = Rect2((f * dimensions.x), row * dimensions.y, dimensions.x, dimensions.y)
-			var frame_texture: Texture2D = atlas_texture
-			if normal_sheet:
-				var normal_slice := AtlasTexture.new()
-				normal_slice.atlas = normal_sheet
-				normal_slice.region = atlas_texture.region
-				var canvas_texture := CanvasTexture.new()
-				canvas_texture.diffuse_texture = atlas_texture
-				canvas_texture.normal_texture = normal_slice
-				frame_texture = canvas_texture
-			sprite_frames.set_frame(anim_name, f, frame_texture)
+			sprite_frames.set_frame(anim_name, f, atlas_texture)
 
 ## Perform a spiral check from the center to try and prove if there's any pixels ASAP
 static func frame_has_content(image: Image, row: int, frame: int, dimensions: Vector2i) -> bool:
