@@ -27,7 +27,7 @@ This script processes the entire target folder of all characters to produce
 a SpriteFrames resource with all animations. The resource is saved to the
 provided output_folder as "mini-fantasy-sprite-frames".
 """
-static func create_sprite_frames_res(characters_folder: String, output_folder: String, output_name: String) -> void:
+static func create_sprite_frames_res(characters_folder: String, output_folder: String, output_name: String) -> Error:
 	myprint('Building sprite frames for characters in: ' + characters_folder + ', output folder: ' + output_folder)
 	var sprite_frames: SpriteFrames
 	var path_to_frames = "%s/%s.res" % [output_folder, output_name]
@@ -53,7 +53,11 @@ static func create_sprite_frames_res(characters_folder: String, output_folder: S
 		if dimensions == Vector2.ZERO:
 			myprint("WARNING: Didn't find sprite size for %s. Using 32x32px." % [folder])
 			dimensions = DEFAULT_SPRITE_SIZE
-		process_sprite_folder(sprite_frames, characters_folder + "/" + folder, dimensions, output_folder, output_name)
+		var err := process_sprite_folder(sprite_frames, characters_folder + "/" + folder, dimensions, output_folder, output_name)
+		if err != OK:
+			push_error("Could not rebuild sprite frames for %s (error %d). Fix its normal map and run Generate Sprite Frames again." % [folder, err])
+			return err
+	return OK
 
 static func process_sprite_folder(sprite_frames: SpriteFrames, folder_path: String, dimensions: Vector2i, output_folder: String, output_name: String) -> Error:
 	var folder_name = folder_path.get_file().split('.')[0]

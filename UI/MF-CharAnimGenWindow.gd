@@ -118,7 +118,9 @@ func _on_item_list_item_selected(index: int) -> void:
 
 ## Generate/regen the Sprite Frames resource, necessary when we added new folders or changed the directory
 func _on_generate_sprites_button_pressed() -> void:
-	MiniFantasySpriteFramesBuilder.create_sprite_frames_res(mini_fantasy_characters_folder, sprite_frames_folder, sprite_frames_file_name)
+	var err := MiniFantasySpriteFramesBuilder.create_sprite_frames_res(mini_fantasy_characters_folder, sprite_frames_folder, sprite_frames_file_name)
+	if err != OK:
+		return
 	sprite_frames_folder = sprite_frames_folder
 	update_frames_check()
 
