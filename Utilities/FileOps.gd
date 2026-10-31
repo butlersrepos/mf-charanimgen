@@ -43,8 +43,8 @@ static func get_all_png_files_from(path: String) -> Array[String]:
 		for file in files:
 			# Get full path
 			var full_path = path.path_join(file)
-			# If it's a PNG file, add it to our list
-			if file.get_extension() == "png":
+			# Normal sheets are channels of their source PNG, never animation inputs.
+			if file.get_extension() == "png" and not file.ends_with("_n.png"):
 				png_files.append(full_path)
 
 		dir.include_hidden = false
