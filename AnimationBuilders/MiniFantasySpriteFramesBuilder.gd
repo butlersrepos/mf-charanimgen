@@ -27,7 +27,7 @@ This script processes the entire target folder of all characters to produce
 a SpriteFrames resource with all animations. The resource is saved to the
 provided output_folder as "mini-fantasy-sprite-frames".
 """
-static func create_sprite_frames_res(characters_folder: String, output_folder: String, output_name: String) -> void:
+static func create_sprite_frames_res(characters_folder: String, output_folder: String, output_name: String) -> Error:
 	myprint('Building sprite frames for characters in: ' + characters_folder + ', output folder: ' + output_folder)
 	var sprite_frames: SpriteFrames
 	var path_to_frames = "%s/%s.res" % [output_folder, output_name]
@@ -53,7 +53,11 @@ static func create_sprite_frames_res(characters_folder: String, output_folder: S
 		if dimensions == Vector2.ZERO:
 			myprint("WARNING: Didn't find sprite size for %s. Using 32x32px." % [folder])
 			dimensions = DEFAULT_SPRITE_SIZE
-		process_sprite_folder(sprite_frames, characters_folder + "/" + folder, dimensions, output_folder, output_name)
+		var err := process_sprite_folder(sprite_frames, characters_folder + "/" + folder, dimensions, output_folder, output_name)
+		if err != OK:
+			push_error("Could not rebuild sprite frames for %s (error %d). Fix its normal map and run Generate Sprite Frames again." % [folder, err])
+			return err
+	return OK
 
 static func process_sprite_folder(sprite_frames: SpriteFrames, folder_path: String, dimensions: Vector2i, output_folder: String, output_name: String) -> Error:
 	var folder_name = folder_path.get_file().split('.')[0]
@@ -62,8 +66,24 @@ static func process_sprite_folder(sprite_frames: SpriteFrames, folder_path: Stri
 	myprint("\nFound PNGs: " + ", ".join(pngs))
 
 	for png in pngs:
-		Image.new()
+		# A normal map belongs to its source sheet, never to a separate animation.
+		if png.ends_with("_n.png"):
+			continue
 		var spritesheet: Texture2D = load(png)
+		var normal_path := png.get_basename() + "_n.png"
+		var normal_sheet: Texture2D = null
+		if FileAccess.file_exists(normal_path):
+			normal_sheet = load(normal_path)
+			if normal_sheet == null or normal_sheet.get_size() != spritesheet.get_size():
+				push_error("Normal map must match its source sheet: %s" % normal_path)
+				return ERR_INVALID_DATA
+		var frame_sheet: Texture2D = spritesheet
+		if normal_sheet:
+			# Keep the atlas region on the outer texture; CanvasTexture stores only channel RIDs.
+			var canvas_texture := CanvasTexture.new()
+			canvas_texture.diffuse_texture = spritesheet
+			canvas_texture.normal_texture = normal_sheet
+			frame_sheet = canvas_texture
 		# This is costly, but enables frame checking for empty/short rows
 		var ss_img = spritesheet.get_image()
 		var anim_configs = MiniFantasySpritesheetClassifier.animation_infos_from_sheet(folder_name, png, dimensions, spritesheet)
@@ -81,7 +101,7 @@ static func process_sprite_folder(sprite_frames: SpriteFrames, folder_path: Stri
 			myprint("[color=cyan]%s[/color] => [color=green]%s[/color] (%s)" % [png, anim_name, config])
 			# These types of animations all sync up to another animation, so empty frames are tolerable, check empty frames for others
 			var should_check_frames = config['is_shadow'] != true && config['is_effect'] != true && config['is_start'] != true && config['is_end'] != true && config['is_cycle'] != true && config['is_glow'] != true
-			add_animation_row(sprite_frames, spritesheet, ss_img, anim_name, dimensions, [config['row']], should_check_frames)
+			add_animation_row(sprite_frames, frame_sheet, ss_img, anim_name, dimensions, [config['row']], should_check_frames)
 			sprite_frames.set_animation_loop(anim_name, config["is_looped"] if config['is_looped'] != null else false)
 
 	# Write all the SpriteFrames out to a saved resource
